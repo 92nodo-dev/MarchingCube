@@ -16,11 +16,11 @@ bool MarchingCube::get_vertices_by_txt(std::string filepath)
 	long fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
 
-	printf("file size : %ld", fileSize);
+	printf("file size : %ld\n", fileSize);
 	for (int i = 0; i < 100; ++i) {
-		fread(&vertices[i].x, sizeof(float), 1, file);
-		fread(&vertices[i].y, sizeof(float), 1, file);
-		fread(&vertices[i].z, sizeof(float), 1, file);
+		fread(&particles[i].position.x, sizeof(float), 1, file);
+		fread(&particles[i].position.y, sizeof(float), 1, file);
+		fread(&particles[i].position.z, sizeof(float), 1, file);
 	}
 
 	fclose(file);
@@ -28,9 +28,32 @@ bool MarchingCube::get_vertices_by_txt(std::string filepath)
 	return true;
 }
 
-void MarchingCube::make_marchingCube_with_vertices(std::vector<vec3> vertices)
+void MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices)
 {
-	
+
+}
+bool MarchingCube::make_polygon_with_particles()
+{
+	if (particles.size() == 0) {
+		printf("[ERR] No particles\n");
+		return false;
+	}
+}
+
+bool MarchingCube::make_grid()
+{
+	find_grid_minmax();
+
+
+}
+
+bool MarchingCube::find_grid_minmax()
+{
+	if (particles.size() == 0) {
+		printf("[ERR] No particles\n");
+		return false;
+	}
+
 }
 
 void MarchingCube::print_txt(std::string filepath)
