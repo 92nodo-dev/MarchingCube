@@ -1,2 +1,16 @@
 
 MarchingCube/.vs/
+*.tlog
+*.log
+*.obj
+*.pdb
+*.exe
+MarchingCube/MarchingCube/MarchingCube.vcxproj
+*.vcxproj
+*.deps
+*.cache
+*.recipe
+*.ilk
+*.exp
+*.idb
+*.lib
