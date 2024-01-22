@@ -32,6 +32,7 @@ void MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices)
 {
 
 }
+
 bool MarchingCube::make_polygon_with_particles()
 {
 	if (particles.size() == 0) {
@@ -44,7 +45,8 @@ bool MarchingCube::make_grid()
 {
 	find_grid_minmax();
 
-
+	vec3 tmpVertex = maxVertex - minVertex;
+	return true;
 }
 
 bool MarchingCube::find_grid_minmax()
@@ -54,6 +56,10 @@ bool MarchingCube::find_grid_minmax()
 		return false;
 	}
 
+	vec3 minVtx, maxVtx = particles[0].position;
+	for (int i = 0; i < particles.size(); ++i) {
+
+	}
 }
 
 void MarchingCube::print_txt(std::string filepath)

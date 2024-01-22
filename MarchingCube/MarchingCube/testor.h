@@ -7,8 +7,8 @@ private :
 	std::vector<Triangle> triangles;
 
 public :
-	Testor();
-	~Testor();
-	void setVertices(std::vector<vec3> vertices);
-	bool verifyMC();
+	//Testor();
+	//~Testor();
+	//void setVertices(std::vector<vec3> vertices);
+	//bool verifyMC();
 };
