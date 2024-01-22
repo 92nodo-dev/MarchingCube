@@ -1,9 +1,8 @@
-﻿#include <iostream>
-
-using namespace std;
+﻿#include "testor.h"
 
 int main()
 {
+	Testor myTestor;
 
 	return 0;
 }
