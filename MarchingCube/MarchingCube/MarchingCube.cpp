@@ -37,7 +37,10 @@ bool MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices)
 	}
 	generate_grid();
 
-	compute_cell_bit(&cells);
+	printf("x Size : %d\ty Size : %d\tz Size : %d\n", axisX, axisY, axisZ);
+
+	compute_cell_bit(cells, axisX, axisY, axisZ);
+
 	return true;
 }
 
