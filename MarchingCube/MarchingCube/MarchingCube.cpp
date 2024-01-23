@@ -33,11 +33,13 @@ bool MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices)
 	for (int i = 0; i < vertices.size(); ++i)
 	{
 		//Particle tmpParticle = { vertices[i], 0.0 };
-		particles.push_back(Particle{ vertices[i], 0.0 });
+		particles.push_back(Particle{ vertices[i], 94.0 });
 	}
 	generate_grid();
 
 	printf("x Size : %d\ty Size : %d\tz Size : %d\n", axisX, axisY, axisZ);
+
+	put_density_into_cell();
 
 	compute_cell_bit(cells, axisX, axisY, axisZ);
 
@@ -65,10 +67,7 @@ bool MarchingCube::generate_grid()
 	axisZ = (int(tmpVertex.z / gridSize) + 1);
 
 	initialize_cell();
-	
-	printf("cells.x : %f\n", cells[0][1][2].coordinate.x);
-	printf("cells.y : %f\n", cells[0][1][2].coordinate.y);
-	printf("cells.z : %f\n", cells[0][1][2].coordinate.z);
+
 	//cells = new Cell[2][3][4];
 	//cells = new Cell[int(tmpVertex.x / gridSize) + 1][int(tmpVertex.y / gridSize) + 1][int(tmpVertex.z / gridSize) + 1];
 	return true;
@@ -78,12 +77,12 @@ bool MarchingCube::put_density_into_cell()
 {
 	for (int i = 0; i < particles.size(); ++i)
 	{
-		cells[int(particles[i].position.x / gridSize)][int(particles[i].position.y / gridSize)][int(particles[i].position.y / gridSize)].particleCnt++;
+		cells[int((particles[i].position.x-minVertex.x) / gridSize)][int((particles[i].position.y - minVertex.y) / gridSize)][int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt++;
 	}
 
 	for (int i = 0; i < particles.size(); ++i)
 	{
-		cells[int(particles[i].position.x / gridSize)][int(particles[i].position.y / gridSize)][int(particles[i].position.y / gridSize)].density += particles[i].density/ cells[int(particles[i].position.x / gridSize)][int(particles[i].position.y / gridSize)][int(particles[i].position.y / gridSize)].particleCnt;
+		cells[int((particles[i].position.x - minVertex.x) / gridSize)][int((particles[i].position.y - minVertex.y) / gridSize)][int((particles[i].position.z - minVertex.z) / gridSize)].density += particles[i].density / cells[int((particles[i].position.x - minVertex.x) / gridSize)][int((particles[i].position.y - minVertex.y) / gridSize)][int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt;
 	}
 	return true;
 }
