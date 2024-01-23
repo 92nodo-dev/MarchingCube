@@ -30,7 +30,11 @@ bool MarchingCube::get_vertices_by_txt(std::string filepath)
 
 void MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices)
 {
-
+	for (int i = 0; i < vertices.size(); ++i)
+	{
+		//Particle tmpParticle = { vertices[i], 0.0 };
+		particles.push_back(Particle{ vertices[i], 0.0 });
+	}
 }
 
 bool MarchingCube::make_polygon_with_particles()
@@ -46,6 +50,49 @@ bool MarchingCube::make_grid()
 	find_grid_minmax();
 
 	vec3 tmpVertex = maxVertex - minVertex;
+	float gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z))/3;
+	
+	//int cellCnt = (int(tmpVertex.x/gridSize)+1) * (int(tmpVertex.y / gridSize)+1) * (int(tmpVertex.z / gridSize)+1);
+	int sizeX = (int(tmpVertex.x / gridSize) + 1);
+	int sizeY = (int(tmpVertex.y / gridSize) + 1);
+	int sizeZ = (int(tmpVertex.z / gridSize) + 1);
+
+	initialize_cell(sizeZ, sizeY, sizeZ, gridSize);
+	
+	printf("cells.x : %f\n", cells[0][1][2].coordinate.x);
+	printf("cells.y : %f\n", cells[0][1][2].coordinate.y);
+	printf("cells.z : %f\n", cells[0][1][2].coordinate.z);
+	//cells = new Cell[2][3][4];
+	//cells = new Cell[int(tmpVertex.x / gridSize) + 1][int(tmpVertex.y / gridSize) + 1][int(tmpVertex.z / gridSize) + 1];
+	return true;
+}
+
+bool MarchingCube::initialize_cell(int x, int y, int z, float gridSize)
+{
+	cells = new Cell * *[x];
+	for (int i = 0; i < x; ++i)
+	{
+		cells[i] = new Cell * [y];
+		for (int j = 0; j < y; ++j)
+		{
+			cells[i][j] = new Cell[z];
+		}
+	}
+
+	for (int i = 0; i < x; ++i)
+	{
+		for (int j = 0; j < y; ++j)
+		{
+			for (int k = 0; k < z; ++k)
+			{
+				cells[i][j][k].coordinate = vec3{ 
+					int(minVertex.x) + (gridSize / 2) + gridSize * i, 
+					int(minVertex.y) + (gridSize / 2) + gridSize * j, 
+					int(minVertex.z) + (gridSize / 2) + gridSize * k 
+				};
+			}
+		}
+	}
 	return true;
 }
 
@@ -55,11 +102,19 @@ bool MarchingCube::find_grid_minmax()
 		printf("[ERR] No particles\n");
 		return false;
 	}
+	minVertex = particles[0].position;
+	maxVertex = particles[0].position;
 
-	vec3 minVtx, maxVtx = particles[0].position;
 	for (int i = 0; i < particles.size(); ++i) {
+		if (minVertex.x > particles[i].position.x) minVertex.x = particles[i].position.x;
+		if (minVertex.y > particles[i].position.y) minVertex.y = particles[i].position.y;
+		if (minVertex.z > particles[i].position.z) minVertex.z = particles[i].position.z;
 
+		if (maxVertex.x < particles[i].position.x) maxVertex.x = particles[i].position.x;
+		if (maxVertex.y < particles[i].position.y) maxVertex.y = particles[i].position.y;
+		if (maxVertex.z < particles[i].position.z) maxVertex.z = particles[i].position.z;
 	}
+	return true;
 }
 
 void MarchingCube::print_txt(std::string filepath)

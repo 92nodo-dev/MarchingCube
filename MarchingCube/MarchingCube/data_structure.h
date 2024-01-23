@@ -7,12 +7,8 @@ struct vec3 {
 	float y;
 	float z;
 
-	vec3 operator+(vec3 v1) {
-		return vec3{ x + v1.x, y + v1.y, z + v1.z };
-	}
-	vec3 operator-(vec3 v1) {
-		return vec3{ x - v1.x, y - v1.y, z - v1.z };
-	}
+	vec3 operator+(vec3 v1) { return vec3{ x + v1.x, y + v1.y, z + v1.z };}
+	vec3 operator-(vec3 v1) { return vec3{ x - v1.x, y - v1.y, z - v1.z };}
 };
 
 struct Particle {
@@ -21,6 +17,7 @@ struct Particle {
 };
 
 struct Cell {
+	vec3 coordinate;
 	vec3 vertex[8];
 };
 
