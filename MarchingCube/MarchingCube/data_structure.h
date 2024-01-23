@@ -19,6 +19,7 @@ struct Particle {
 struct Cell {
 	float density;
 	int particleCnt;
+	int vertexCase;
 
 	vec3 coordinate;
 	vec3 vertex[8];

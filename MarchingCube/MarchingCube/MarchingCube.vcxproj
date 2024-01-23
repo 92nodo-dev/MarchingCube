@@ -83,8 +83,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data_structure.h" />
+    <ClInclude Include="MarchingCube.cuh" />
     <ClInclude Include="MarchingCube.h" />
     <ClInclude Include="testor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="MarchingCube.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
