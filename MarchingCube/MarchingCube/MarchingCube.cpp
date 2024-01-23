@@ -28,13 +28,14 @@ bool MarchingCube::get_vertices_by_txt(std::string filepath)
 	return true;
 }
 
-void MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices)
+bool MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices)
 {
 	for (int i = 0; i < vertices.size(); ++i)
 	{
 		//Particle tmpParticle = { vertices[i], 0.0 };
 		particles.push_back(Particle{ vertices[i], 0.0 });
 	}
+	return true;
 }
 
 bool MarchingCube::make_polygon_with_particles()
@@ -50,14 +51,14 @@ bool MarchingCube::generate_grid()
 	find_grid_minmax();
 
 	vec3 tmpVertex = maxVertex - minVertex;
-	float gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z))/3;
+	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z))/3;
 	
 	//int cellCnt = (int(tmpVertex.x/gridSize)+1) * (int(tmpVertex.y / gridSize)+1) * (int(tmpVertex.z / gridSize)+1);
-	int sizeX = (int(tmpVertex.x / gridSize) + 1);
-	int sizeY = (int(tmpVertex.y / gridSize) + 1);
-	int sizeZ = (int(tmpVertex.z / gridSize) + 1);
+	axisX = (int(tmpVertex.x / gridSize) + 1);
+	axisY = (int(tmpVertex.y / gridSize) + 1);
+	axisZ = (int(tmpVertex.z / gridSize) + 1);
 
-	initialize_cell(sizeZ, sizeY, sizeZ, gridSize);
+	initialize_cell();
 	
 	printf("cells.x : %f\n", cells[0][1][2].coordinate.x);
 	printf("cells.y : %f\n", cells[0][1][2].coordinate.y);
@@ -67,29 +68,44 @@ bool MarchingCube::generate_grid()
 	return true;
 }
 
-bool MarchingCube::initialize_cell(int x, int y, int z, float gridSize)
+bool MarchingCube::put_density_into_cell()
 {
-	cells = new Cell * *[x];
-	for (int i = 0; i < x; ++i)
+	for (int i = 0; i < particles.size(); ++i)
 	{
-		cells[i] = new Cell * [y];
-		for (int j = 0; j < y; ++j)
+		cells[int(particles[i].position.x / gridSize)][int(particles[i].position.y / gridSize)][int(particles[i].position.y / gridSize)].particleCnt++;
+	}
+
+	for (int i = 0; i < particles.size(); ++i)
+	{
+		cells[int(particles[i].position.x / gridSize)][int(particles[i].position.y / gridSize)][int(particles[i].position.y / gridSize)].density += particles[i].density/ cells[int(particles[i].position.x / gridSize)][int(particles[i].position.y / gridSize)][int(particles[i].position.y / gridSize)].particleCnt;
+	}
+
+}
+
+bool MarchingCube::initialize_cell()
+{
+	cells = new Cell * *[axisX];
+	for (int i = 0; i < axisX; ++i)
+	{
+		cells[i] = new Cell * [axisY];
+		for (int j = 0; j < axisY; ++j)
 		{
-			cells[i][j] = new Cell[z];
+			cells[i][j] = new Cell[axisZ];
 		}
 	}
 
-	for (int i = 0; i < x; ++i)
+	for (int i = 0; i < axisX; ++i)
 	{
-		for (int j = 0; j < y; ++j)
+		for (int j = 0; j < axisY; ++j)
 		{
-			for (int k = 0; k < z; ++k)
+			for (int k = 0; k < axisZ; ++k)
 			{
 				cells[i][j][k].coordinate = vec3{ 
 					int(minVertex.x) + (gridSize / 2) + gridSize * i, 
 					int(minVertex.y) + (gridSize / 2) + gridSize * j, 
 					int(minVertex.z) + (gridSize / 2) + gridSize * k 
 				};
+				cells[i][j][k].set_vertex_with_coordinate(gridSize);
 			}
 		}
 	}

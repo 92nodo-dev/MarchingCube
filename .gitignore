@@ -14,3 +14,4 @@ MarchingCube/MarchingCube/MarchingCube.vcxproj
 *.exp
 *.idb
 *.lib
+*.txt
