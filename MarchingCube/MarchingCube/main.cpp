@@ -1,13 +1,19 @@
 ﻿#include "testor.h"
-
+#include "MarchingCube.h"
 int main()
 {
 	Testor myTestor;
 	vec3 a = { 1.0,-5.0,3.0 };
 	vec3 b = { -5.0,3.0,9.0 };
 	vec3 c = a - b;
-	printf("x = %f\n", c.x);
-	printf("y = %f\n", c.y);
-	printf("z = %f\n", c.z);
+
+	std::vector<vec3> testVertex;
+	testVertex.push_back(a);
+	testVertex.push_back(b);
+	testVertex.push_back(c);
+
+	MarchingCube mc;
+	mc.make_polygon_with_particles(testVertex);
+	mc.generate_grid();
 	return 0;
 }
