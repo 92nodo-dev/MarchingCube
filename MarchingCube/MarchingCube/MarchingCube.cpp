@@ -35,6 +35,12 @@ bool MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices)
 		//Particle tmpParticle = { vertices[i], 0.0 };
 		particles.push_back(Particle{ vertices[i], 0.0 });
 	}
+	generate_grid();
+
+	printf("x Size : %d\ty Size : %d\tz Size : %d\n", axisX, axisY, axisZ);
+
+	compute_cell_bit(cells, axisX, axisY, axisZ);
+
 	return true;
 }
 
@@ -79,7 +85,7 @@ bool MarchingCube::put_density_into_cell()
 	{
 		cells[int(particles[i].position.x / gridSize)][int(particles[i].position.y / gridSize)][int(particles[i].position.y / gridSize)].density += particles[i].density/ cells[int(particles[i].position.x / gridSize)][int(particles[i].position.y / gridSize)][int(particles[i].position.y / gridSize)].particleCnt;
 	}
-
+	return true;
 }
 
 bool MarchingCube::initialize_cell()

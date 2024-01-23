@@ -1,6 +1,8 @@
 ﻿#pragma once
-#include "data_structure.h"
 #include <stdio.h>
+#include "data_structure.h"
+
+#include "MarchingCube.cuh"
 
 class MarchingCube {
 
@@ -28,6 +30,7 @@ public:
 	bool find_grid_minmax();
 	bool initialize_cell();
 	bool put_density_into_cell();
+
 	//void compute_vertex_density();
 	void print_txt(std::string filepath);
 };
