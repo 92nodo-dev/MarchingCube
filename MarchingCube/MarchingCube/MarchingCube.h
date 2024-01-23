@@ -12,16 +12,22 @@ private :
 	vec3 minVertex;
 	vec3 maxVertex;
 
+	float gridSize;
+	int axisX;
+	int axisY;
+	int axisZ;
+
 public:
 	MarchingCube() {};
 	~MarchingCube() {};
 
 	bool get_vertices_by_txt(std::string filepath);
 	bool make_polygon_with_particles();
-	void make_polygon_with_particles(std::vector<vec3> vertices);
+	bool make_polygon_with_particles(std::vector<vec3> vertices);
 	bool generate_grid();
 	bool find_grid_minmax();
-	bool initialize_cell(int x, int y, int z, float gridSize);
+	bool initialize_cell();
+	bool put_density_into_cell();
 	//void compute_vertex_density();
 	void print_txt(std::string filepath);
 };
