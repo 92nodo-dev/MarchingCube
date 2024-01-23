@@ -19,7 +19,7 @@ public:
 	bool get_vertices_by_txt(std::string filepath);
 	bool make_polygon_with_particles();
 	void make_polygon_with_particles(std::vector<vec3> vertices);
-	bool make_grid();
+	bool generate_grid();
 	bool find_grid_minmax();
 	bool initialize_cell(int x, int y, int z, float gridSize);
 	//void compute_vertex_density();

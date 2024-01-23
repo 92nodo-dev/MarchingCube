@@ -45,7 +45,7 @@ bool MarchingCube::make_polygon_with_particles()
 	}
 }
 
-bool MarchingCube::make_grid()
+bool MarchingCube::generate_grid()
 {
 	find_grid_minmax();
 

@@ -14,6 +14,6 @@ int main()
 
 	MarchingCube mc;
 	mc.make_polygon_with_particles(testVertex);
-	mc.make_grid();
+	mc.generate_grid();
 	return 0;
 }
