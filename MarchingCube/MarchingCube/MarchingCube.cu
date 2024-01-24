@@ -5,9 +5,22 @@
 
 __global__ void compute_bit(Cell* cell, int x, int y, int z) {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;
-	int zIndex = int(idx % z);
-	int yIndex = int((idx / z) % y);
-	int xIndex = int(idx / (y * z));
+	int zIndex = int(idx / ((x+1)*(y+1)));
+	int yIndex = int(idx % ((x + 1) * (y + 1))) / (y+1);
+	int xIndex = int(idx % ((x + 1) * (y + 1))) % (y + 1);
+
+	// point index (a,b,c) 일 때 
+	// cell 기준 
+	// cells 내 index			1차원 cell index					cell 내부의 vertex 번호
+	// cell[a-1][b-1][c-1]		(x*y*(c-1)) + (x*(b-1)) + (a-1)		6
+	// cell[a][b-1][c-1]		(x*y*(c-1)) + (x*(b-1)) + (a-1)		7
+	// cell[a][b][c-1]			(x*y*(c-1)) + (x*(b-1)) + (a-1)		4
+	// cell[a-1][b][c-1]		(x*y*(c-1)) + (x*(b-1)) + (a-1)		5
+	// cell[a-1][b-1][c]		(x*y*(c-1)) + (x*(b-1)) + (a-1)		2
+	// cell[a][b-1][c]			(x*y*(c-1)) + (x*(b-1)) + (a-1)		3
+	// cell[a][b][c]			(x*y*(c-1)) + (x*(b-1)) + (a-1)		0
+	// cell[a-1][b][c]			(x*y*(c-1)) + (x*(b-1)) + (a-1)		1
+
 	//printf("xIndex : %d\tyIndex : %d\tzIndex : %d\n", xIndex, yIndex, zIndex);
 	//printf("yIndex : %d\t", yIndex);
 	//printf("test : %f\n", cell[idx].density);
@@ -31,6 +44,8 @@ __global__ void compute_bit(Cell*** cell, int x, int y, int z) {
 }
 */
 
+
+
 void compute_cell_bit(Cell*** cells, int axisX, int axisY, int axisZ)
 {
 	//Cell*** d_cells;
@@ -52,7 +67,7 @@ void compute_cell_bit(Cell*** cells, int axisX, int axisY, int axisZ)
 	}
 	//cudaMemcpy(d_cells, cells, axisX * axisY * axisZ * sizeof(Cell), cudaMemcpyDeviceToDevice);
 	
-	compute_bit << <1, axisX*axisY*axisZ >> > (d_cells, axisX, axisY, axisZ);
+	compute_bit << <1, (axisX+1)*(axisY+1)*(axisZ+1) >> > (d_cells, axisX, axisY, axisZ);
 
 	cudaFree(d_cells);
 }
