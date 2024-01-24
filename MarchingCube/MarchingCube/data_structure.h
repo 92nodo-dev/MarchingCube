@@ -22,6 +22,7 @@ struct Cell {
 	int vertexCase;
 
 	vec3 coordinate;
+	vec3 edgeVertex[12];
 	vec3 vertex[8];
 	Cell() 
 	{ 
