@@ -30,14 +30,14 @@ struct Cell {
 	}
 	void set_vertex_with_coordinate(float gridSize) 
 	{
-		vertex[0] = vec3{ coordinate.x - (gridSize * 0.5f), coordinate.y - (gridSize * 0.5f) , coordinate.z + (gridSize * 0.5f) };
-		vertex[1] = vec3{ coordinate.x + (gridSize * 0.5f), coordinate.y - (gridSize * 0.5f) , coordinate.z + (gridSize * 0.5f) };
-		vertex[2] = vec3{ coordinate.x + (gridSize * 0.5f), coordinate.y + (gridSize * 0.5f) , coordinate.z + (gridSize * 0.5f) };
-		vertex[3] = vec3{ coordinate.x - (gridSize * 0.5f), coordinate.y + (gridSize * 0.5f) , coordinate.z + (gridSize * 0.5f) };
-		vertex[4] = vec3{ coordinate.x - (gridSize * 0.5f), coordinate.y - (gridSize * 0.5f) , coordinate.z - (gridSize * 0.5f) };
-		vertex[5] = vec3{ coordinate.x + (gridSize * 0.5f), coordinate.y - (gridSize * 0.5f) , coordinate.z - (gridSize * 0.5f) };
-		vertex[6] = vec3{ coordinate.x + (gridSize * 0.5f), coordinate.y + (gridSize * 0.5f) , coordinate.z - (gridSize * 0.5f) };
-		vertex[7] = vec3{ coordinate.x - (gridSize * 0.5f), coordinate.y + (gridSize * 0.5f) , coordinate.z - (gridSize * 0.5f) };
+		vertex[0] = vec3{ coordinate.x - (gridSize * 0.5f), coordinate.y - (gridSize * 0.5f) , coordinate.z - (gridSize * 0.5f) };
+		vertex[1] = vec3{ coordinate.x + (gridSize * 0.5f), coordinate.y - (gridSize * 0.5f) , coordinate.z - (gridSize * 0.5f) };
+		vertex[2] = vec3{ coordinate.x + (gridSize * 0.5f), coordinate.y + (gridSize * 0.5f) , coordinate.z - (gridSize * 0.5f) };
+		vertex[3] = vec3{ coordinate.x - (gridSize * 0.5f), coordinate.y + (gridSize * 0.5f) , coordinate.z - (gridSize * 0.5f) };
+		vertex[4] = vec3{ coordinate.x - (gridSize * 0.5f), coordinate.y - (gridSize * 0.5f) , coordinate.z + (gridSize * 0.5f) };
+		vertex[5] = vec3{ coordinate.x + (gridSize * 0.5f), coordinate.y - (gridSize * 0.5f) , coordinate.z + (gridSize * 0.5f) };
+		vertex[6] = vec3{ coordinate.x + (gridSize * 0.5f), coordinate.y + (gridSize * 0.5f) , coordinate.z + (gridSize * 0.5f) };
+		vertex[7] = vec3{ coordinate.x - (gridSize * 0.5f), coordinate.y + (gridSize * 0.5f) , coordinate.z + (gridSize * 0.5f) };
 	}
 };
 
