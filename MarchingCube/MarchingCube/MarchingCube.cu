@@ -10,11 +10,12 @@ __global__ void compute_bit(Cell* cell, int x, int y, int z) {
 	int xIndex = int(idx / (y * z));
 	//printf("xIndex : %d\tyIndex : %d\tzIndex : %d\n", xIndex, yIndex, zIndex);
 	//printf("yIndex : %d\t", yIndex);
-	printf("test : %f\n", cell[idx].density);
+	//printf("test : %f\n", cell[idx].density);
 	//printf("x : %f\ty : %f\tz : %f\n", cell[xIndex][yIndex][zIndex].coordinate.x, cell[xIndex][yIndex][zIndex].coordinate.y, cell[xIndex][yIndex][zIndex].coordinate.z);
 
 	//printf("test : %d\n", idx);
 }
+
 /*
 __global__ void compute_bit(Cell*** cell, int x, int y, int z) {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;
@@ -29,6 +30,7 @@ __global__ void compute_bit(Cell*** cell, int x, int y, int z) {
 	//printf("test : %d\n", idx);
 }
 */
+
 void compute_cell_bit(Cell*** cells, int axisX, int axisY, int axisZ)
 {
 	//Cell*** d_cells;
@@ -42,7 +44,7 @@ void compute_cell_bit(Cell*** cells, int axisX, int axisY, int axisZ)
 		{
 			for (int k = 0; k < axisZ; ++k)
 			{
-				printf("density : %f\n", cells[i][j][k].density);
+				//printf("density : %f\n", cells[i][j][k].density);
 				cudaMemcpy(&d_cells[d_idx], &cells[i][j][k], sizeof(Cell), cudaMemcpyHostToDevice);
 				d_idx++;
 			}
