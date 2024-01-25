@@ -1,5 +1,6 @@
 ﻿#include "testor.h"
-#include "MarchingCube.h"
+#include "MarchingCube.cuh"
+
 int main()
 {
 	Testor myTestor;
@@ -13,7 +14,8 @@ int main()
 	testVertex.push_back(c);
 
 	MarchingCube mc;
-	mc.make_polygon_with_particles(testVertex);
+	mc.make_polygon_with_particles(testVertex, 20.0);
+	mc.print_txt("test.txt");
 	//mc.generate_grid();
 	return 0;
 }
