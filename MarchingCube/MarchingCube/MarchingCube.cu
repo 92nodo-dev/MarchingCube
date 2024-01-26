@@ -300,7 +300,6 @@ bool MarchingCube::get_vertices_by_txt(std::string positionPath, std::string den
 
 	fclose(file);
 
-	//printf("testsetset1111\n");
 
 
 	FILE* file2 = NULL;
