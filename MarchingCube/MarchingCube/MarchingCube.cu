@@ -100,9 +100,9 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;
 
 	int usage = 0;
-	printf("cell x : %f\n", cell[idx].vertex[0].x);
-	printf("cell y : %f\n", cell[idx].vertex[0].y);
-	printf("cell z : %f\n", cell[idx].vertex[0].z);
+	//printf("cell x : %f\n", cell[idx].vertex[6].x);
+	//printf("cell y : %f\n", cell[idx].vertex[6].y);
+	//printf("cell z : %f\n", cell[idx].vertex[6].z);
 	//printf("cell triangle %d\n", idx);
 	if (cell[idx].isUsingVertex[0]) usage += 1;
 	if (cell[idx].isUsingVertex[1]) usage += 2;
@@ -142,10 +142,15 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	*/
 	for (int i = 0; i < 5; i++)
 	{
-		//if (d_triTable[(usage * 16) + (i*3)] == -1) break;
-		cell[idx].triangles[i].t1 = cell[idx].edgeVertex[d_triTable[(usage * 16) + i]];
-		cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + i+1]];
-		cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + i+2]];
+		if (d_triTable[(usage * 16) + (i * 3)] == -1) {
+			cell[idx].triangleCnt = i;
+			break;
+		}
+		cell[idx].triangles[i].t1 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)]];
+		cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)+1]];
+		cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)+2]];
+		//printf("%d, %d, %d\n", (usage * 16) + (i * 3), (usage * 16) + (i * 3) + 1, (usage * 16) + (i * 3) + 2);
+		//printf("(%f, %f, %f)\n", cell[idx].triangles[i].t1.x, cell[idx].triangles[i].t2.x, cell[idx].triangles[i].t3.x);
 	}
 	/*
 	printf("triangleArr X : %f\n", cell[idx].triangles[0].t1.x);
@@ -156,18 +161,19 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 
 __global__ void add_triangle_to_array(Cell* cell, Triangle* triangleArr) {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;
-
+	int amount = cell[idx].triangleCnt;
 	triangleArr[idx * 5 + 0] = cell[idx].triangles[0];
 	triangleArr[idx * 5 + 1] = cell[idx].triangles[1];
 	triangleArr[idx * 5 + 2] = cell[idx].triangles[2];
 	triangleArr[idx * 5 + 3] = cell[idx].triangles[3];
 	triangleArr[idx * 5 + 4] = cell[idx].triangles[4];
 
-	//printf("triangleArr X : %f\n", cell[idx].triangles[0].t1.x);
-	//printf("triangleArr Y : %f\n", cell[idx].triangles[0].t1.y);
-	//printf("triangleArr Z : %f\n", cell[idx].triangles[0].t1.z);
+	//printf("(%f, %f, %f)\n", cell[idx].triangles[0].t1.x, cell[idx].triangles[0].t1.y, cell[idx].triangles[0].t1.z);
 }
-
+__global__ void compute_triangle_index(Cell* cell) {
+	int idx = blockDim.x * blockIdx.x + threadIdx.x;
+	//cell[idx].triangleStartIndex
+}
 void MarchingCube::compute_cell_bit(float isoValue)
 {
 	compute_bit << <1, (axisX+1)*(axisY+1)*(axisZ+1) >> > (d_cells, axisX, axisY, axisZ, isoValue);
@@ -175,14 +181,54 @@ void MarchingCube::compute_cell_bit(float isoValue)
 
 void MarchingCube::make_triangle(float isoValue)
 {
-	make_cell_triangle <<< 1, (axisX + 1)* (axisY + 1)* (axisZ + 1) >> > (d_cells, d_edgeTable, d_triangleTable, axisX, axisY, axisZ, isoValue);
+	make_cell_triangle <<< 1, axisX* axisY* axisZ >> > (d_cells, d_edgeTable, d_triangleTable, axisX, axisY, axisZ, isoValue);
 }
 
 void MarchingCube::make_triangle_arr()
 {
-	add_triangle_to_array <<< 1, (axisX + 1)* (axisY + 1)* (axisZ + 1) >> > (d_cells, d_triangles);
+	//add_triangle_to_array <<< 1, (axisX)* (axisY)* (axisZ) >> > (d_cells, d_triangles);
+	//cudaMemcpy(cells, d_triangles, axisX * axisY * axisZ * sizeof(Triangle), cudaMemcpyDeviceToHost);
+	int d_idx = 0;
+	for (int i = 0; i < axisX; ++i)
+	{
+		for (int j = 0; j < axisY; ++j)
+		{
+			for (int k = 0; k < axisZ; ++k)
+			{
+				cudaMemcpy(&cells[i][j][k], &d_cells[d_idx], sizeof(Cell), cudaMemcpyDeviceToHost);
+				d_idx++;
+			}
+		}
+	}
 
-	cudaMemcpy(h_triangles, d_triangles, axisX * axisY * axisZ * sizeof(Triangle), cudaMemcpyDeviceToHost);
+	for (int i = 0; i < axisX; ++i)
+	{
+		for (int j = 0; j < axisY; ++j)
+		{
+			for (int k = 0; k < axisZ; ++k)
+			{
+				for (int l = 0; l < cells[i][j][k].triangleCnt; ++l)
+				{
+					h_triangles.push_back(cells[i][j][k].triangles[l]);
+				}
+			}
+		}
+	}
+
+	//	for (int i = 0 ; i < axisX * axisY * axisZ; ++i)
+	//{
+		
+	//}
+	//cudaMemcpy(h_triangles, d_triangles, axisX * axisY * axisZ * sizeof(Triangle), cudaMemcpyDeviceToHost);
+}
+
+__global__ void check_vertex(Cell* cell) {
+	int idx = blockDim.x * blockIdx.x + threadIdx.x;
+	
+	printf("cell x : %f\n", cell[idx].vertex[6].x);
+	printf("cell y : %f\n", cell[idx].vertex[6].y);
+	printf("cell z : %f\n", cell[idx].vertex[6].z);
+	//printf("idx : %d\n", idx);
 }
 
 void MarchingCube::alloc_device_memory()
@@ -195,7 +241,7 @@ void MarchingCube::alloc_device_memory()
 
 	cudaMemcpy(d_edgeTable, EdgeTable, 256 * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_triangleTable, TriTable, 256 * 16 * sizeof(short int), cudaMemcpyHostToDevice);
-	cudaMemcpy(d_triangles, h_triangles, axisX * axisY * axisZ * sizeof(Triangle), cudaMemcpyHostToDevice);
+	//cudaMemcpy(d_triangles, h_triangles, axisX * axisY * axisZ * sizeof(Triangle), cudaMemcpyHostToDevice);
 
 	for (int i = 0; i < axisX; ++i)
 	{
@@ -204,11 +250,14 @@ void MarchingCube::alloc_device_memory()
 			for (int k = 0; k < axisZ; ++k)
 			{
 				//printf("density : %f\n", cells[i][j][k].density);
+				cells[i][j][k].index = d_idx;
 				cudaMemcpy(&d_cells[d_idx], &cells[i][j][k], sizeof(Cell), cudaMemcpyHostToDevice);
 				d_idx++;
 			}
 		}
 	}
+
+	//check_vertex << < 1, (axisX)* (axisY)* (axisZ) >> > (d_cells);
 }
 
 void MarchingCube::free_device_memory()
@@ -216,43 +265,77 @@ void MarchingCube::free_device_memory()
 	cudaFree(d_cells);
 	cudaFree(d_edgeTable);
 	cudaFree(d_triangleTable);
-	cudaFree(d_triangles);
+	//cudaFree(d_triangles);
 }
 
-bool MarchingCube::get_vertices_by_txt(std::string filepath)
+bool MarchingCube::get_vertices_by_txt(std::string positionPath, std::string densityPath)
 {
 	FILE* file = NULL;
 	errno_t err;
 
-	err = fopen_s(&file, filepath.c_str(), "rb");
+	err = fopen_s(&file, positionPath.c_str(), "rb");
 	if (err != 0) {
-		printf("failed to open File [%s]\n", filepath.c_str());
+		printf("failed to open File [%s]\n", positionPath.c_str());
 		return false;
 	}
-
 
 	fseek(file, 0, SEEK_END);
 	long fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
 
-	printf("file size : %ld\n", fileSize);
-	for (int i = 0; i < 100; ++i) {
-		fread(&particles[i].position.x, sizeof(float), 1, file);
-		fread(&particles[i].position.y, sizeof(float), 1, file);
-		fread(&particles[i].position.z, sizeof(float), 1, file);
+	printf("file size : %ld\n", fileSize/(3*sizeof(float)));
+
+	particles = new Particle[fileSize / (3 * sizeof(float))];
+
+	particleSize = fileSize / (3 * sizeof(float));
+	for (int i = 0; i < fileSize/(3*sizeof(float)); ++i) {
+		vec3 tmpPosition;
+		fread(&(particles[i].position.x), sizeof(float), 1, file);
+		fread(&(particles[i].position.y), sizeof(float), 1, file);
+		fread(&(particles[i].position.z), sizeof(float), 1, file);
+
+		//Particle{ tmpPosition}
+		//printf("%f\n", particles[i].position.x);
 	}
 
 	fclose(file);
+
+	//printf("testsetset1111\n");
+
+
+	FILE* file2 = NULL;
+	errno_t err2;
+	err2 = fopen_s(&file2, densityPath.c_str(), "rb");
+	if (err2 != 0) {
+		printf("failed to open File [%s]\n", densityPath.c_str());
+		return false;
+	}
+
+	fseek(file2, 0, SEEK_END);
+	long fileSize2 = ftell(file2);
+	fseek(file2, 0, SEEK_SET);
+
+	printf("file size : %ld\n", fileSize / (3 * sizeof(float)));
+
+	for (int i = 0; i < fileSize / (3 * sizeof(float)); ++i) {
+		fread(&(particles[i].density), sizeof(float), 1, file2);
+	}
+
+	fclose(file2);
 
 	return true;
 }
 
 bool MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices, float isoValue)
 {
+	particles = new Particle[vertices.size()];
+	particleSize = vertices.size();
+
 	for (int i = 0; i < vertices.size(); ++i)
 	{
 		//Particle tmpParticle = { vertices[i], 0.0 };
-		particles.push_back(Particle{ vertices[i], 94.0 });
+		particles[i].position = vertices[i];
+		particles[i].density = 94.0;
 	}
 	generate_grid();
 
@@ -271,12 +354,27 @@ bool MarchingCube::make_polygon_with_particles(std::vector<vec3> vertices, float
 	return true;
 }
 
-bool MarchingCube::make_polygon_with_particles()
+bool MarchingCube::make_polygon_with_particles(float isoValue)
 {
-	if (particles.size() == 0) {
+	if (particleSize == 0) {
 		printf("[ERR] No particles\n");
 		return false;
 	}
+	generate_grid();
+
+	printf("x Size : %d\ty Size : %d\tz Size : %d\n", axisX, axisY, axisZ);
+
+	if (put_density_into_cell()) printf("put density into cell \n");
+
+	alloc_device_memory();
+
+	compute_cell_bit(isoValue);
+
+	make_triangle(isoValue);
+
+	make_triangle_arr();
+
+	return true;
 }
 
 bool MarchingCube::generate_grid()
@@ -284,13 +382,14 @@ bool MarchingCube::generate_grid()
 	find_grid_minmax();
 
 	vec3 tmpVertex = maxVertex - minVertex;
-	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 3;
+	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 5;
 
 	//int cellCnt = (int(tmpVertex.x/gridSize)+1) * (int(tmpVertex.y / gridSize)+1) * (int(tmpVertex.z / gridSize)+1);
 	axisX = (int(tmpVertex.x / gridSize) + 1);
 	axisY = (int(tmpVertex.y / gridSize) + 1);
 	axisZ = (int(tmpVertex.z / gridSize) + 1);
 
+	printf("%d, %d, %d\n", axisX, axisY, axisZ);
 	initialize_cell();
 
 	//cells = new Cell[2][3][4];
@@ -300,12 +399,12 @@ bool MarchingCube::generate_grid()
 
 bool MarchingCube::put_density_into_cell()
 {
-	for (int i = 0; i < particles.size(); ++i)
+	for (int i = 0; i < particleSize; ++i)
 	{
 		cells[int((particles[i].position.x - minVertex.x) / gridSize)][int((particles[i].position.y - minVertex.y) / gridSize)][int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt++;
 	}
 
-	for (int i = 0; i < particles.size(); ++i)
+	for (int i = 0; i < particleSize; ++i)
 	{
 		cells[int((particles[i].position.x - minVertex.x) / gridSize)][int((particles[i].position.y - minVertex.y) / gridSize)][int((particles[i].position.z - minVertex.z) / gridSize)].density += particles[i].density / cells[int((particles[i].position.x - minVertex.x) / gridSize)][int((particles[i].position.y - minVertex.y) / gridSize)][int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt;
 	}
@@ -340,21 +439,21 @@ bool MarchingCube::initialize_cell()
 		}
 	}
 
-	h_triangles = new Triangle[axisX * axisY * axisZ];
+	//h_triangles = new Triangle[axisX * axisY * axisZ];
 
 	return true;
 }
 
 bool MarchingCube::find_grid_minmax()
 {
-	if (particles.size() == 0) {
+	if (particleSize == 0) {
 		printf("[ERR] No particles\n");
 		return false;
 	}
 	minVertex = particles[0].position;
 	maxVertex = particles[0].position;
 
-	for (int i = 0; i < particles.size(); ++i) {
+	for (int i = 0; i < particleSize; ++i) {
 		if (minVertex.x > particles[i].position.x) minVertex.x = particles[i].position.x;
 		if (minVertex.y > particles[i].position.y) minVertex.y = particles[i].position.y;
 		if (minVertex.z > particles[i].position.z) minVertex.z = particles[i].position.z;
@@ -372,9 +471,7 @@ void MarchingCube::print_txt(std::string filepath)
 
 	fopen_s(&file, filepath.c_str(), "wb");
 
-	for (int i = 0; i < (sizeof(h_triangles)/sizeof(Triangle)); ++i) {
-		printf("triangle %d\n", i);
-
+	for (int i = 0; i < h_triangles.size(); ++i) {
 		fwrite(&h_triangles[i].t1.x, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t1.y, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t1.z, sizeof(float), 1, file);

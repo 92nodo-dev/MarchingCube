@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 #include "data_structure.h"
 
 #include "MarchingCube.cuh"
@@ -7,10 +9,12 @@
 class MarchingCube {
 
 private:
-	std::vector<Particle> particles;
-	Triangle* h_triangles;
+	//std::vector<Particle> particles;
+	Particle* particles;
+	std::vector<Triangle> h_triangles;
 	Triangle* d_triangles;
 	Cell*** cells;
+	int particleSize = 0;
 
 	Cell* d_cells;
 	int* d_edgeTable;
@@ -308,8 +312,8 @@ public:
 	MarchingCube() {};
 	~MarchingCube() {};
 
-	bool get_vertices_by_txt(std::string filepath);
-	bool make_polygon_with_particles();
+	bool get_vertices_by_txt(std::string filepath, std::string densityPath);
+	bool make_polygon_with_particles(float isoValue);
 	bool make_polygon_with_particles(std::vector<vec3> vertices, float isoValue);
 	bool generate_grid();
 	bool find_grid_minmax();

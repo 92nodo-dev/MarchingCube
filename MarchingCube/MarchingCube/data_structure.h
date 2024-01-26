@@ -27,6 +27,7 @@ struct Particle {
 };
 
 struct Cell {
+	int index;
 	float density;
 	int particleCnt;
 	int vertexCase;
@@ -34,8 +35,10 @@ struct Cell {
 	vec3 coordinate;
 	vec3 edgeVertex[12];
 	Triangle triangles[5];
-	bool isUsingVertex[8];
+	bool isUsingVertex[8] = { false, };
 	float valueOfVertex[8] = { 0, };
+
+	int triangleCnt = -1;
 
 	vec3 vertex[8];
 
