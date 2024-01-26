@@ -382,7 +382,7 @@ bool MarchingCube::generate_grid()
 	find_grid_minmax();
 
 	vec3 tmpVertex = maxVertex - minVertex;
-	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 5;
+	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 6;
 
 	//int cellCnt = (int(tmpVertex.x/gridSize)+1) * (int(tmpVertex.y / gridSize)+1) * (int(tmpVertex.z / gridSize)+1);
 	axisX = (int(tmpVertex.x / gridSize) + 1);
@@ -472,6 +472,8 @@ void MarchingCube::print_txt(std::string filepath)
 	fopen_s(&file, filepath.c_str(), "wb");
 
 	for (int i = 0; i < h_triangles.size(); ++i) {
+		printf("triangle %d\n", i);
+
 		fwrite(&h_triangles[i].t1.x, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t1.y, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t1.z, sizeof(float), 1, file);
