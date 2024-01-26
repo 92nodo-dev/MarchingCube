@@ -43,6 +43,10 @@ struct Cell {
 	{ 
 		particleCnt = 0; 
 		density = 0;
+		for (int i = 0; i < 12; ++i)
+		{
+			edgeVertex[i] = vec3{ 0.0f,0.0f,0.0f };
+		}
 	}
 
 	void set_vertex_with_coordinate(float gridSize) 

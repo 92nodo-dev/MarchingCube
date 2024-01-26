@@ -327,4 +327,3 @@ public:
 	//void compute_vertex_density();
 	void print_txt(std::string filepath);
 };
-
