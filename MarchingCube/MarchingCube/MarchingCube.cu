@@ -20,7 +20,7 @@ __global__ void compute_bit(Cell* cell, int x, int y, int z, float isoValue) {
 	int zIndex = int(idx / ((x+1)*(y+1)));
 	int yIndex = int(idx % ((x + 1) * (y + 1))) / (y+1);
 	int xIndex = int(idx % ((x + 1) * (y + 1))) % (y + 1);
-
+	//printf("bit %d\n", idx);
 	if ((xIndex % x != 0) && (yIndex % y != 0) && (zIndex % z != 0))
 	{
 		float avgDensity = 0;
@@ -33,7 +33,6 @@ __global__ void compute_bit(Cell* cell, int x, int y, int z, float isoValue) {
 		avgDensity += cell[(x * y * (zIndex)) + (x * (yIndex)) + (xIndex)].density;
 		avgDensity += cell[(x * y * (zIndex)) + (x * (yIndex)) + (xIndex - 1)].density;
 		//avgDensity *= 0.125;
-
 		if (avgDensity > (isoValue * 8))
 		{
 			cell[(x * y * (zIndex - 1)) + (x * (yIndex - 1)) + (xIndex - 1)].isUsingVertex[6] = true;
@@ -101,7 +100,10 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;
 
 	int usage = 0;
-
+	printf("cell x : %f\n", cell[idx].vertex[0].x);
+	printf("cell y : %f\n", cell[idx].vertex[0].y);
+	printf("cell z : %f\n", cell[idx].vertex[0].z);
+	//printf("cell triangle %d\n", idx);
 	if (cell[idx].isUsingVertex[0]) usage += 1;
 	if (cell[idx].isUsingVertex[1]) usage += 2;
 	if (cell[idx].isUsingVertex[2]) usage += 4;
@@ -113,7 +115,13 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 
 	int usingEdge = d_edgeTable[usage];
 
-	if (usingEdge & 1)		cell[idx].edgeVertex[0] = cell[idx].vertex[0] + ((cell[idx].vertex[1] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[1] - cell[idx].valueOfVertex[0])));
+	if (usingEdge & 1) {
+		cell[idx].edgeVertex[0] = cell[idx].vertex[0] + ((cell[idx].vertex[1] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[1] - cell[idx].valueOfVertex[0])));
+
+		//printf("triangleArr X : %f\n", cell[idx].vertex[1].x);
+		//printf("triangleArr Y : %f\n", cell[idx].vertex[1].y);
+		//printf("triangleArr Z : %f\n", cell[idx].vertex[1].z);
+	}
 	if (usingEdge & 2)		cell[idx].edgeVertex[1] = cell[idx].vertex[1] + ((cell[idx].vertex[2] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[2] - cell[idx].valueOfVertex[1])));
 	if (usingEdge & 4)		cell[idx].edgeVertex[2] = cell[idx].vertex[2] + ((cell[idx].vertex[3] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[3] - cell[idx].valueOfVertex[2])));
 	if (usingEdge & 8)		cell[idx].edgeVertex[3] = cell[idx].vertex[3] + ((cell[idx].vertex[0] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[4] - cell[idx].valueOfVertex[3])));
@@ -127,24 +135,37 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	if (usingEdge & 512)	cell[idx].edgeVertex[9] = cell[idx].vertex[1] + ((cell[idx].vertex[5] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[5] - cell[idx].valueOfVertex[1])));
 	if (usingEdge & 1024)	cell[idx].edgeVertex[10] = cell[idx].vertex[2] + ((cell[idx].vertex[6] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[6] - cell[idx].valueOfVertex[2])));
 	if (usingEdge & 2048)	cell[idx].edgeVertex[11] = cell[idx].vertex[3] + ((cell[idx].vertex[7] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[7] - cell[idx].valueOfVertex[3])));
-
-	
+	/*
+	printf("triangleArr X : %f\n", cell[idx].edgeVertex[0].x);
+	printf("triangleArr Y : %f\n", cell[idx].edgeVertex[0].y);
+	printf("triangleArr Z : %f\n", cell[idx].edgeVertex[0].z);
+	*/
 	for (int i = 0; i < 5; i++)
 	{
-		if (d_triTable[(usage * 16) + (i*3)] == -1) break;
+		//if (d_triTable[(usage * 16) + (i*3)] == -1) break;
 		cell[idx].triangles[i].t1 = cell[idx].edgeVertex[d_triTable[(usage * 16) + i]];
 		cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + i+1]];
 		cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + i+2]];
 	}
+	/*
+	printf("triangleArr X : %f\n", cell[idx].triangles[0].t1.x);
+	printf("triangleArr Y : %f\n", cell[idx].triangles[0].t1.y);
+	printf("triangleArr Z : %f\n", cell[idx].triangles[0].t1.z);
+	*/
 }
 
 __global__ void add_triangle_to_array(Cell* cell, Triangle* triangleArr) {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;
+
 	triangleArr[idx * 5 + 0] = cell[idx].triangles[0];
 	triangleArr[idx * 5 + 1] = cell[idx].triangles[1];
 	triangleArr[idx * 5 + 2] = cell[idx].triangles[2];
 	triangleArr[idx * 5 + 3] = cell[idx].triangles[3];
 	triangleArr[idx * 5 + 4] = cell[idx].triangles[4];
+
+	//printf("triangleArr X : %f\n", cell[idx].triangles[0].t1.x);
+	//printf("triangleArr Y : %f\n", cell[idx].triangles[0].t1.y);
+	//printf("triangleArr Z : %f\n", cell[idx].triangles[0].t1.z);
 }
 
 void MarchingCube::compute_cell_bit(float isoValue)
