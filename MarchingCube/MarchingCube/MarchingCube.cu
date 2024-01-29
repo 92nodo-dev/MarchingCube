@@ -492,3 +492,88 @@ void MarchingCube::print_txt(std::string filepath)
 
 	fclose(file);
 }
+
+void MarchingCube::print_vtu(std::string filepath)
+{
+	FILE* file = NULL;
+
+	fopen_s(&file, filepath.c_str(), "wb");
+
+	std::string txt = "<VTKFile type=\"UnstructuredGrid\" version=\"1.0\">\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "<UnstructuredGrid>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+	txt = "<Piece NumberOfPoints=\"" + std::to_string(3) + "\" NumberOfCells=\"" + std::to_string(1) + "\">\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+	txt = "<Points>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+	txt = "<DataArray type=\"Float64\" NumberOfComponents=\"" + std::to_string(h_triangles.size()*3) + "\" format=\"ascii\">\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	for (int i = 0; i < h_triangles.size(); ++i) {
+		printf("triangle %d\n", i);
+
+
+		fwrite(&h_triangles[i].t1.x, sizeof(float), 1, file);
+		fwrite(&h_triangles[i].t1.y, sizeof(float), 1, file);
+		fwrite(&h_triangles[i].t1.z, sizeof(float), 1, file);
+		printf("(%f, %f, %f)\n", h_triangles[i].t1.x, h_triangles[i].t1.y, h_triangles[i].t1.z);
+
+		fwrite(&h_triangles[i].t2.x, sizeof(float), 1, file);
+		fwrite(&h_triangles[i].t2.y, sizeof(float), 1, file);
+		fwrite(&h_triangles[i].t2.z, sizeof(float), 1, file);
+		printf("(%f, %f, %f)\n", h_triangles[i].t2.x, h_triangles[i].t2.y, h_triangles[i].t2.z);
+
+		fwrite(&h_triangles[i].t3.x, sizeof(float), 1, file);
+		fwrite(&h_triangles[i].t3.y, sizeof(float), 1, file);
+		fwrite(&h_triangles[i].t3.z, sizeof(float), 1, file);
+		printf("(%f, %f, %f)\n", h_triangles[i].t3.x, h_triangles[i].t3.y, h_triangles[i].t3.z);
+	}
+
+	txt = "\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+	txt = "</DataArray>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "</Points>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "<Cells>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "<DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = std::to_string(h_triangles.size() * 3) + "\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "</DataArray>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "<DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "";
+	for (int i = 0; i < h_triangles.size()*3; ++i)
+	{
+		if (i % 3 == 2) txt += (std::to_string(i) + "\n");
+		else txt += (std::to_string(i) + " ");
+	}
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "</DataArray>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "<DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "5\n</DataArray>\n</Cells>\n</Piece>\n</UnstructuredGrid>\n</VTKFile>";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+	fclose(file);
+}
+
+void MarchingCube::write_binary(std::string txt)
+{
+
+}

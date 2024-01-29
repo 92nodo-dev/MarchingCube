@@ -18,6 +18,7 @@ int main()
 	mc.make_polygon_with_particles(20.0);
 	//mc.make_polygon_with_particles(testVertex, 20.0);
 	mc.print_txt("test.txt");
+	mc.print_vtu("test.vtu");
 	//mc.generate_grid();
 	return 0;
 }
