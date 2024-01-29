@@ -510,29 +510,31 @@ void MarchingCube::print_vtu(std::string filepath)
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 	txt = "<DataArray type=\"Float64\" NumberOfComponents=\"" + std::to_string(h_triangles.size()*3) + "\" format=\"ascii\">\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-
+	txt = "";
 	for (int i = 0; i < h_triangles.size(); ++i) {
 		printf("triangle %d\n", i);
 
-
-		fwrite(&h_triangles[i].t1.x, sizeof(float), 1, file);
-		fwrite(&h_triangles[i].t1.y, sizeof(float), 1, file);
-		fwrite(&h_triangles[i].t1.z, sizeof(float), 1, file);
+		txt += (std::to_string(h_triangles[i].t1.x) + " " + std::to_string(h_triangles[i].t1.y) + " " + std::to_string(h_triangles[i].t1.z) + "\n");
+		txt += (std::to_string(h_triangles[i].t2.x) + " " + std::to_string(h_triangles[i].t2.y) + " " + std::to_string(h_triangles[i].t2.z) + "\n");
+		txt += (std::to_string(h_triangles[i].t3.x) + " " + std::to_string(h_triangles[i].t3.y) + " " + std::to_string(h_triangles[i].t3.z) + "\n");
+		//fwrite(&h_triangles[i].t1.x, sizeof(float), 1, file);
+		//fwrite(&h_triangles[i].t1.y, sizeof(float), 1, file);
+		//fwrite(&h_triangles[i].t1.z, sizeof(float), 1, file);
 		printf("(%f, %f, %f)\n", h_triangles[i].t1.x, h_triangles[i].t1.y, h_triangles[i].t1.z);
 
-		fwrite(&h_triangles[i].t2.x, sizeof(float), 1, file);
-		fwrite(&h_triangles[i].t2.y, sizeof(float), 1, file);
-		fwrite(&h_triangles[i].t2.z, sizeof(float), 1, file);
+		//fwrite(&h_triangles[i].t2.x, sizeof(float), 1, file);
+		//fwrite(&h_triangles[i].t2.y, sizeof(float), 1, file);
+		//fwrite(&h_triangles[i].t2.z, sizeof(float), 1, file);
 		printf("(%f, %f, %f)\n", h_triangles[i].t2.x, h_triangles[i].t2.y, h_triangles[i].t2.z);
 
-		fwrite(&h_triangles[i].t3.x, sizeof(float), 1, file);
-		fwrite(&h_triangles[i].t3.y, sizeof(float), 1, file);
-		fwrite(&h_triangles[i].t3.z, sizeof(float), 1, file);
+		//fwrite(&h_triangles[i].t3.x, sizeof(float), 1, file);
+		//fwrite(&h_triangles[i].t3.y, sizeof(float), 1, file);
+		//fwrite(&h_triangles[i].t3.z, sizeof(float), 1, file);
 		printf("(%f, %f, %f)\n", h_triangles[i].t3.x, h_triangles[i].t3.y, h_triangles[i].t3.z);
 	}
 
-	txt = "\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
 	txt = "</DataArray>\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
