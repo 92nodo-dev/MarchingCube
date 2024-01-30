@@ -115,13 +115,7 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 
 	int usingEdge = d_edgeTable[usage];
 
-	if (usingEdge & 1) {
-		cell[idx].edgeVertex[0] = cell[idx].vertex[0] + ((cell[idx].vertex[1] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[1] - cell[idx].valueOfVertex[0])));
-
-		//printf("triangleArr X : %f\n", cell[idx].vertex[1].x);
-		//printf("triangleArr Y : %f\n", cell[idx].vertex[1].y);
-		//printf("triangleArr Z : %f\n", cell[idx].vertex[1].z);
-	}
+	if (usingEdge & 1)		cell[idx].edgeVertex[0] = cell[idx].vertex[0] + ((cell[idx].vertex[1] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[1] - cell[idx].valueOfVertex[0])));
 	if (usingEdge & 2)		cell[idx].edgeVertex[1] = cell[idx].vertex[1] + ((cell[idx].vertex[2] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[2] - cell[idx].valueOfVertex[1])));
 	if (usingEdge & 4)		cell[idx].edgeVertex[2] = cell[idx].vertex[2] + ((cell[idx].vertex[3] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[3] - cell[idx].valueOfVertex[2])));
 	if (usingEdge & 8)		cell[idx].edgeVertex[3] = cell[idx].vertex[3] + ((cell[idx].vertex[0] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[4] - cell[idx].valueOfVertex[3])));
@@ -389,7 +383,7 @@ bool MarchingCube::generate_grid()
 	axisY = (int(tmpVertex.y / gridSize) + 1);
 	axisZ = (int(tmpVertex.z / gridSize) + 1);
 
-	printf("%d, %d, %d\n", axisX, axisY, axisZ);
+	//printf("%d, %d, %d\n", axisX, axisY, axisZ);
 	initialize_cell();
 
 	//cells = new Cell[2][3][4];
@@ -430,10 +424,11 @@ bool MarchingCube::initialize_cell()
 			for (int k = 0; k < axisZ; ++k)
 			{
 				cells[i][j][k].coordinate = vec3{
-					int(minVertex.x) + (gridSize / 2) + gridSize * i,
-					int(minVertex.y) + (gridSize / 2) + gridSize * j,
-					int(minVertex.z) + (gridSize / 2) + gridSize * k
+					minVertex.x + (gridSize / 2) + gridSize * i,
+					minVertex.y + (gridSize / 2) + gridSize * j,
+					minVertex.z + (gridSize / 2) + gridSize * k
 				};
+				printf("(%f, %f, %f)\n", cells[i][j][k].coordinate.x, cells[i][j][k].coordinate.y, cells[i][j][k].coordinate.z);
 				cells[i][j][k].set_vertex_with_coordinate(gridSize);
 			}
 		}
@@ -453,6 +448,7 @@ bool MarchingCube::find_grid_minmax()
 	minVertex = particles[0].position;
 	maxVertex = particles[0].position;
 
+
 	for (int i = 0; i < particleSize; ++i) {
 		if (minVertex.x > particles[i].position.x) minVertex.x = particles[i].position.x;
 		if (minVertex.y > particles[i].position.y) minVertex.y = particles[i].position.y;
@@ -462,6 +458,8 @@ bool MarchingCube::find_grid_minmax()
 		if (maxVertex.y < particles[i].position.y) maxVertex.y = particles[i].position.y;
 		if (maxVertex.z < particles[i].position.z) maxVertex.z = particles[i].position.z;
 	}
+	printf("min : (%f, %f, %f)\n", minVertex.x, minVertex.y, minVertex.z);
+	printf("max : (%f, %f, %f)\n", maxVertex.x, maxVertex.y, maxVertex.z);
 	return true;
 }
 
@@ -472,22 +470,22 @@ void MarchingCube::print_txt(std::string filepath)
 	fopen_s(&file, filepath.c_str(), "wb");
 
 	for (int i = 0; i < h_triangles.size(); ++i) {
-		printf("triangle %d\n", i);
+		//printf("triangle %d\n", i);
 
 		fwrite(&h_triangles[i].t1.x, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t1.y, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t1.z, sizeof(float), 1, file);
-		printf("(%f, %f, %f)\n", h_triangles[i].t1.x, h_triangles[i].t1.y, h_triangles[i].t1.z);
+		//printf("(%f, %f, %f)\n", h_triangles[i].t1.x, h_triangles[i].t1.y, h_triangles[i].t1.z);
 
 		fwrite(&h_triangles[i].t2.x, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t2.y, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t2.z, sizeof(float), 1, file);
-		printf("(%f, %f, %f)\n", h_triangles[i].t2.x, h_triangles[i].t2.y, h_triangles[i].t2.z);
+		//printf("(%f, %f, %f)\n", h_triangles[i].t2.x, h_triangles[i].t2.y, h_triangles[i].t2.z);
 
 		fwrite(&h_triangles[i].t3.x, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t3.y, sizeof(float), 1, file);
 		fwrite(&h_triangles[i].t3.z, sizeof(float), 1, file);
-		printf("(%f, %f, %f)\n", h_triangles[i].t3.x, h_triangles[i].t3.y, h_triangles[i].t3.z);
+		//printf("(%f, %f, %f)\n", h_triangles[i].t3.x, h_triangles[i].t3.y, h_triangles[i].t3.z);
 	}
 
 	fclose(file);
