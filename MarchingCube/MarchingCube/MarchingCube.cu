@@ -50,16 +50,6 @@ __global__ void compute_bit(Cell* cell, int x, int y, int z, float isoValue) {
 
 			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].isUsingVertex[4] = true;
 			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].valueOfVertex[4] = avgDensity;
-			if (idx == 555) {
-				printf("idx %d vertex 6 x : %f\n", (z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1), cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].vertex[6].x);
-				printf("idx %d vertex 2 x : %f\n", (z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex), cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].vertex[2].x);
-				printf("idx %d vertex 1 x : %f\n", (z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex), cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex)].vertex[1].x);
-				printf("idx %d vertex 5 x : %f\n", (z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex - 1), cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex - 1)].vertex[5].x);
-				printf("idx %d vertex 7 x : %f\n", (z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1), cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1)].vertex[7].x);
-				printf("idx %d vertex 3 x : %f\n", (z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex), cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex)].vertex[3].x);
-				printf("idx %d vertex 0 x : %f\n", (z * y * (xIndex)) + (z * (yIndex)) + (zIndex), cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].vertex[0].x);
-				printf("idx %d vertex 4 x : %f\n", (z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1), cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].vertex[4].x);
-			}
 		}
 	}
 }
@@ -78,6 +68,22 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	if (cell[idx].isUsingVertex[7]) usage += 128;
 
 	int usingEdge = d_edgeTable[usage];
+	/*
+	if (usingEdge & 1)		cell[idx].edgeVertex[0] = cell[idx].vertex[0] +((cell[idx].vertex[1] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[1] - cell[idx].valueOfVertex[0])));
+	if (usingEdge & 2)		cell[idx].edgeVertex[1] = cell[idx].vertex[1] + ((cell[idx].vertex[2] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[2] - cell[idx].valueOfVertex[1])));
+	if (usingEdge & 4)		cell[idx].edgeVertex[2] = cell[idx].vertex[2] + ((cell[idx].vertex[3] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[3] - cell[idx].valueOfVertex[2])));
+	if (usingEdge & 8)		cell[idx].edgeVertex[3] = cell[idx].vertex[3] + ((cell[idx].vertex[0] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[4] - cell[idx].valueOfVertex[3])));
+
+	if (usingEdge & 16)		cell[idx].edgeVertex[4] = cell[idx].vertex[4] + ((cell[idx].vertex[5] - cell[idx].vertex[4]) * ((isoValue - cell[idx].valueOfVertex[4]) / (cell[idx].valueOfVertex[5] - cell[idx].valueOfVertex[4])));
+	if (usingEdge & 32)		cell[idx].edgeVertex[5] = cell[idx].vertex[5] + ((cell[idx].vertex[6] - cell[idx].vertex[5]) * ((isoValue - cell[idx].valueOfVertex[5]) / (cell[idx].valueOfVertex[6] - cell[idx].valueOfVertex[5])));
+	if (usingEdge & 64)		cell[idx].edgeVertex[6] = cell[idx].vertex[6] + ((cell[idx].vertex[7] - cell[idx].vertex[6]) * ((isoValue - cell[idx].valueOfVertex[6]) / (cell[idx].valueOfVertex[7] - cell[idx].valueOfVertex[6])));
+	if (usingEdge & 128)	cell[idx].edgeVertex[7] = cell[idx].vertex[7] + ((cell[idx].vertex[4] - cell[idx].vertex[7]) * ((isoValue - cell[idx].valueOfVertex[7]) / (cell[idx].valueOfVertex[4] - cell[idx].valueOfVertex[7])));
+
+	if (usingEdge & 256)	cell[idx].edgeVertex[8] = cell[idx].vertex[0] + ((cell[idx].vertex[4] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[4] - cell[idx].valueOfVertex[0])));
+	if (usingEdge & 512)	cell[idx].edgeVertex[9] = cell[idx].vertex[1] + ((cell[idx].vertex[5] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[5] - cell[idx].valueOfVertex[1])));
+	if (usingEdge & 1024)	cell[idx].edgeVertex[10] = cell[idx].vertex[2] + ((cell[idx].vertex[6] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[6] - cell[idx].valueOfVertex[2])));
+	if (usingEdge & 2048)	cell[idx].edgeVertex[11] = cell[idx].vertex[3] + ((cell[idx].vertex[7] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[7] - cell[idx].valueOfVertex[3])));
+	*/
 	
 	if (usingEdge & 1)		cell[idx].edgeVertex[0] = (cell[idx].vertex[0] + cell[idx].vertex[1]) * 0.5f;
 	if (usingEdge & 2)		cell[idx].edgeVertex[1] = (cell[idx].vertex[1] + cell[idx].vertex[2]) * 0.5f;
@@ -352,7 +358,7 @@ bool MarchingCube::generate_grid()
 	find_grid_minmax();
 
 	vec3 tmpVertex = maxVertex - minVertex;
-	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 60;
+	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 50;
 
 	axisX = (int(tmpVertex.x / gridSize) + 1);
 	axisY = (int(tmpVertex.y / gridSize) + 1);
