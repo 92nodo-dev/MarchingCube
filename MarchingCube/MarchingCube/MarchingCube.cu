@@ -215,6 +215,7 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 		cell[idx].triangles[i].t1 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)]];
 		cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)+1]];
 		cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)+2]];
+		cell[idx].triangles[i].density = cell[idx].density;
 		//printf("x : %f\n", cell[idx].triangles[i].t1.x);
 		//printf("%d, %d, %d\n", (usage * 16) + (i * 3), (usage * 16) + (i * 3) + 1, (usage * 16) + (i * 3) + 2);
 		//printf("(%f, %f, %f)\n", cell[idx].triangles[i].t1.x, cell[idx].triangles[i].t2.x, cell[idx].triangles[i].t3.x);
@@ -496,7 +497,7 @@ bool MarchingCube::generate_grid()
 	find_grid_minmax();
 
 	vec3 tmpVertex = maxVertex - minVertex;
-	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 30;
+	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 60;
 
 	//int cellCnt = (int(tmpVertex.x/gridSize)+1) * (int(tmpVertex.y / gridSize)+1) * (int(tmpVertex.z / gridSize)+1);
 	axisX = (int(tmpVertex.x / gridSize) + 1);
@@ -714,7 +715,25 @@ void MarchingCube::print_vtu(std::string filepath)
 	txt += "\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
-	txt = "</DataArray>\n</Cells>\n</Piece>\n</UnstructuredGrid>\n</VTKFile>";
+	txt = "</DataArray>\n</Cells>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "<CellData>\n<DataArray type = \"Float32\" Name=\"Density\" format=\"ascii\">\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "";
+
+	for (int i = 0; i < h_triangles.size(); ++i)
+	{
+		txt += std::to_string(h_triangles[i].density) + " ";
+	}
+	txt += "\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "</DataArray>\n</CellData>\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "</Piece>\n</UnstructuredGrid>\n</VTKFile>";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 	fclose(file);
 }
