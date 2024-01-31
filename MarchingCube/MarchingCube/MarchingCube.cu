@@ -17,9 +17,9 @@ struct vec3 {
 
 __global__ void compute_bit(Cell* cell, int x, int y, int z, float isoValue) {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;
-	int zIndex = int(idx / ((x+1)*(y+1)));
-	int yIndex = int(idx % ((x + 1) * (y + 1))) / (y+1);
-	int xIndex = int(idx % ((x + 1) * (y + 1))) % (y + 1);
+	int xIndex = int(idx / ((z + 1) * (y + 1)));
+	int yIndex = int(idx % ((z + 1) * (y + 1))) / (z + 1);
+	int zIndex = int(idx % ((z + 1) * (y + 1))) % (z + 1);
 	//printf("bit %d\n", idx);
 	if ((xIndex % x != 0) && (yIndex % y != 0) && (zIndex % z != 0))
 	{
@@ -72,20 +72,21 @@ __global__ void compute_bit(Cell* cell, int x, int y, int z, float isoValue) {
 		//avgDensity *= 0.125;
 		if (avgDensity > (isoValue * 8))
 		{
+			//printf("idx : %d\n", idx);
 			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].isUsingVertex[6] = true;
 			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].valueOfVertex[6] = avgDensity;
 
-			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].isUsingVertex[7] = true;
-			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].valueOfVertex[7] = avgDensity;
+			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].isUsingVertex[2] = true;
+			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].valueOfVertex[2] = avgDensity;
 
-			cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex)].isUsingVertex[4] = true;
-			cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex)].valueOfVertex[4] = avgDensity;
+			cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex)].isUsingVertex[1] = true;
+			cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex)].valueOfVertex[1] = avgDensity;
 
 			cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex - 1)].isUsingVertex[5] = true;
 			cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex - 1)].valueOfVertex[5] = avgDensity;
 
-			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1)].isUsingVertex[2] = true;
-			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1)].valueOfVertex[2] = avgDensity;
+			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1)].isUsingVertex[7] = true;
+			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1)].valueOfVertex[7] = avgDensity;
 
 			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex)].isUsingVertex[3] = true;
 			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex)].valueOfVertex[3] = avgDensity;
@@ -93,9 +94,23 @@ __global__ void compute_bit(Cell* cell, int x, int y, int z, float isoValue) {
 			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].isUsingVertex[0] = true;
 			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].valueOfVertex[0] = avgDensity;
 
-			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].isUsingVertex[1] = true;
-			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].valueOfVertex[1] = avgDensity;
+			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].isUsingVertex[4] = true;
+			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].valueOfVertex[4] = avgDensity;
+			if (idx == 555) {
+				printf("idx %d vertex 6 x : %f\n", (z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1), cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].vertex[6].x);
+				printf("idx %d vertex 2 x : %f\n", (z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex), cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].vertex[2].x);
+				printf("idx %d vertex 1 x : %f\n", (z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex), cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex)].vertex[1].x);
+				printf("idx %d vertex 5 x : %f\n", (z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex - 1), cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex - 1)].vertex[5].x);
+				printf("idx %d vertex 7 x : %f\n", (z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1), cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1)].vertex[7].x);
+				printf("idx %d vertex 3 x : %f\n", (z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex), cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex)].vertex[3].x);
+				printf("idx %d vertex 0 x : %f\n", (z * y * (xIndex)) + (z * (yIndex)) + (zIndex), cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].vertex[0].x);
+				printf("idx %d vertex 4 x : %f\n", (z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1), cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].vertex[4].x);
+			}
 		}
+		/*
+		else {
+			printf("x : %f\n", cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].vertex[0].x);
+		}*/
 	}
 
 	// point index (a,b,c) 일 때 
@@ -135,6 +150,9 @@ __global__ void compute_bit(Cell*** cell, int x, int y, int z) {
 
 __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_triTable, int x, int y, int z, float isoValue) {
 	int idx = blockDim.x * blockIdx.x + threadIdx.x;
+	//printf("idx : %d\n", idx);
+
+	//printf("x : %f\n", cell[idx].vertex[0].x);
 
 	int usage = 0;
 	//printf("cell x : %f\n", cell[idx].vertex[6].x);
@@ -150,7 +168,7 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	if (cell[idx].isUsingVertex[6]) usage += 64;
 	if (cell[idx].isUsingVertex[7]) usage += 128;
 	int usingEdge = d_edgeTable[usage];
-	printf("%d : usingEdge = %d\n", idx, usingEdge);
+	//printf("%d : usingEdge = %d\n", idx, usingEdge);
 	/*
 	if (usingEdge & 1)		cell[idx].edgeVertex[0] = cell[idx].vertex[0] +((cell[idx].vertex[1] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[1] - cell[idx].valueOfVertex[0])));
 	if (usingEdge & 2)		cell[idx].edgeVertex[1] = cell[idx].vertex[1] + ((cell[idx].vertex[2] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[2] - cell[idx].valueOfVertex[1])));
@@ -168,20 +186,20 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	if (usingEdge & 2048)	cell[idx].edgeVertex[11] = cell[idx].vertex[3] + ((cell[idx].vertex[7] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[7] - cell[idx].valueOfVertex[3])));
 	*/
 	
-	if (usingEdge & 1)		cell[idx].edgeVertex[0] = (cell[idx].vertex[0] + cell[idx].vertex[1]) * 0.5f; // +((cell[idx].vertex[1] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[1] - cell[idx].valueOfVertex[0])));
-	if (usingEdge & 2)		cell[idx].edgeVertex[1] = (cell[idx].vertex[1] + cell[idx].vertex[2]) * 0.5f; //cell[idx].vertex[1] + ((cell[idx].vertex[2] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[2] - cell[idx].valueOfVertex[1])));
-	if (usingEdge & 4)		cell[idx].edgeVertex[2] = (cell[idx].vertex[2] + cell[idx].vertex[3]) * 0.5f; //cell[idx].vertex[2] + ((cell[idx].vertex[3] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[3] - cell[idx].valueOfVertex[2])));
-	if (usingEdge & 8)		cell[idx].edgeVertex[3] = (cell[idx].vertex[0] + cell[idx].vertex[3]) * 0.5f; //cell[idx].vertex[3] + ((cell[idx].vertex[0] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[4] - cell[idx].valueOfVertex[3])));
+	if (usingEdge & 1)		cell[idx].edgeVertex[0] = (cell[idx].vertex[0] + cell[idx].vertex[1]) * 0.5f;
+	if (usingEdge & 2)		cell[idx].edgeVertex[1] = (cell[idx].vertex[1] + cell[idx].vertex[2]) * 0.5f;
+	if (usingEdge & 4)		cell[idx].edgeVertex[2] = (cell[idx].vertex[2] + cell[idx].vertex[3]) * 0.5f; 
+	if (usingEdge & 8)		cell[idx].edgeVertex[3] = (cell[idx].vertex[0] + cell[idx].vertex[3]) * 0.5f;
 
-	if (usingEdge & 16)		cell[idx].edgeVertex[4] = (cell[idx].vertex[4] + cell[idx].vertex[5]) * 0.5f; //cell[idx].vertex[4] + ((cell[idx].vertex[5] - cell[idx].vertex[4]) * ((isoValue - cell[idx].valueOfVertex[4]) / (cell[idx].valueOfVertex[5] - cell[idx].valueOfVertex[4])));
-	if (usingEdge & 32)		cell[idx].edgeVertex[5] = (cell[idx].vertex[5] + cell[idx].vertex[6]) * 0.5f; //cell[idx].vertex[5] + ((cell[idx].vertex[6] - cell[idx].vertex[5]) * ((isoValue - cell[idx].valueOfVertex[5]) / (cell[idx].valueOfVertex[6] - cell[idx].valueOfVertex[5])));
-	if (usingEdge & 64)		cell[idx].edgeVertex[6] = (cell[idx].vertex[6] + cell[idx].vertex[7]) * 0.5f; //cell[idx].vertex[6] + ((cell[idx].vertex[7] - cell[idx].vertex[6]) * ((isoValue - cell[idx].valueOfVertex[6]) / (cell[idx].valueOfVertex[7] - cell[idx].valueOfVertex[6])));
-	if (usingEdge & 128)	cell[idx].edgeVertex[7] = (cell[idx].vertex[7] + cell[idx].vertex[4]) * 0.5f; //cell[idx].vertex[7] + ((cell[idx].vertex[4] - cell[idx].vertex[7]) * ((isoValue - cell[idx].valueOfVertex[7]) / (cell[idx].valueOfVertex[4] - cell[idx].valueOfVertex[7])));
+	if (usingEdge & 16)		cell[idx].edgeVertex[4] = (cell[idx].vertex[4] + cell[idx].vertex[5]) * 0.5f;
+	if (usingEdge & 32)		cell[idx].edgeVertex[5] = (cell[idx].vertex[5] + cell[idx].vertex[6]) * 0.5f; 
+	if (usingEdge & 64)		cell[idx].edgeVertex[6] = (cell[idx].vertex[6] + cell[idx].vertex[7]) * 0.5f;
+	if (usingEdge & 128)	cell[idx].edgeVertex[7] = (cell[idx].vertex[7] + cell[idx].vertex[4]) * 0.5f;
 
-	if (usingEdge & 256)	cell[idx].edgeVertex[8] = (cell[idx].vertex[0] + cell[idx].vertex[4]) * 0.5f; //cell[idx].vertex[0] + ((cell[idx].vertex[4] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[4] - cell[idx].valueOfVertex[0])));
-	if (usingEdge & 512)	cell[idx].edgeVertex[9] = (cell[idx].vertex[1] + cell[idx].vertex[5]) * 0.5f; //cell[idx].vertex[1] + ((cell[idx].vertex[5] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[5] - cell[idx].valueOfVertex[1])));
-	if (usingEdge & 1024)	cell[idx].edgeVertex[10] = (cell[idx].vertex[2] + cell[idx].vertex[6]) * 0.5f; //cell[idx].vertex[2] + ((cell[idx].vertex[6] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[6] - cell[idx].valueOfVertex[2])));
-	if (usingEdge & 2048)	cell[idx].edgeVertex[11] = (cell[idx].vertex[3] + cell[idx].vertex[7]) * 0.5f; //cell[idx].vertex[3] + ((cell[idx].vertex[7] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[7] - cell[idx].valueOfVertex[3])));
+	if (usingEdge & 256)	cell[idx].edgeVertex[8] = (cell[idx].vertex[0] + cell[idx].vertex[4]) * 0.5f; 
+	if (usingEdge & 512)	cell[idx].edgeVertex[9] = (cell[idx].vertex[1] + cell[idx].vertex[5]) * 0.5f; 
+	if (usingEdge & 1024)	cell[idx].edgeVertex[10] = (cell[idx].vertex[2] + cell[idx].vertex[6]) * 0.5f; 
+	if (usingEdge & 2048)	cell[idx].edgeVertex[11] = (cell[idx].vertex[3] + cell[idx].vertex[7]) * 0.5f; 
 	
 	/*
 	printf("triangleArr X : %f\n", cell[idx].edgeVertex[0].x);
@@ -197,6 +215,7 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 		cell[idx].triangles[i].t1 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)]];
 		cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)+1]];
 		cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)+2]];
+		//printf("x : %f\n", cell[idx].triangles[i].t1.x);
 		//printf("%d, %d, %d\n", (usage * 16) + (i * 3), (usage * 16) + (i * 3) + 1, (usage * 16) + (i * 3) + 2);
 		//printf("(%f, %f, %f)\n", cell[idx].triangles[i].t1.x, cell[idx].triangles[i].t2.x, cell[idx].triangles[i].t3.x);
 	}
@@ -224,12 +243,30 @@ __global__ void compute_triangle_index(Cell* cell) {
 }
 void MarchingCube::compute_cell_bit(float isoValue)
 {
-	compute_bit << <1, (axisX+1)*(axisY+1)*(axisZ+1) >> > (d_cells, axisX, axisY, axisZ, isoValue);
+	compute_bit << <((axisX + 1) * (axisY + 1) * (axisZ + 1)) / 64, 64 >> > (d_cells, axisX, axisY, axisZ, isoValue);
+	cudaError_t err = cudaGetLastError();
+	if (cudaSuccess != err) {
+		printf("CUDA:ERROR:cuda failure \"%s\"\n", cudaGetErrorString(err));
+		exit(1);
+	}
+	else {
+		printf("CUDA Success\n");
+	}
+	printf("inside compute_cell_bit\n");
 }
 
 void MarchingCube::make_triangle(float isoValue)
 {
-	make_cell_triangle <<< 1, axisX* axisY* axisZ >> > (d_cells, d_edgeTable, d_triangleTable, axisX, axisY, axisZ, isoValue);
+	make_cell_triangle <<< ((axisX) * (axisY) * (axisZ)) / 64, 64 >> > (d_cells, d_edgeTable, d_triangleTable, axisX, axisY, axisZ, isoValue);
+	cudaError_t err = cudaGetLastError();
+	if (cudaSuccess != err) {
+		printf("CUDA:ERROR:cuda failure \"%s\"\n", cudaGetErrorString(err));
+		exit(1);
+	}
+	else {
+		printf("CUDA Success\n");
+	}
+	printf("inside make_cell_triangle\n");
 }
 
 void MarchingCube::make_triangle_arr()
@@ -282,6 +319,7 @@ __global__ void check_vertex(Cell* cell) {
 void MarchingCube::alloc_device_memory()
 {
 	int d_idx = 0;
+	printf("inside alloc device memory\n");
 	cudaMalloc((void**)&d_cells, axisX * axisY * axisZ * sizeof(Cell));
 	cudaMalloc((void**)&d_edgeTable, 256 * sizeof(int));
 	cudaMalloc((void**)&d_triangleTable, 256 * 16 * sizeof(short int));
@@ -303,8 +341,17 @@ void MarchingCube::alloc_device_memory()
 				d_idx++;
 			}
 		}
+	}    
+	cudaError_t err = cudaGetLastError();
+	if (cudaSuccess != err) {
+		printf("CUDA:ERROR:cuda failure \"%s\"\n", cudaGetErrorString(err));
+		exit(1);
+	}
+	else {
+		printf("CUDA Success\n");
 	}
 
+	printf("inside alloc device memory\n");
 	//check_vertex << < 1, (axisX)* (axisY)* (axisZ) >> > (d_cells);
 }
 
@@ -432,6 +479,15 @@ bool MarchingCube::make_polygon_with_particles(float isoValue)
 
 	make_triangle_arr();
 
+	cudaError_t err = cudaGetLastError();
+	if (cudaSuccess != err) {
+		printf("CUDA:ERROR:cuda failure \"%s\"\n", cudaGetErrorString(err));
+		exit(1);
+	}
+	else {
+		printf("CUDA Success\n");
+	}
+	printf("inside make_cell_triangle\n");
 	return true;
 }
 
@@ -440,15 +496,16 @@ bool MarchingCube::generate_grid()
 	find_grid_minmax();
 
 	vec3 tmpVertex = maxVertex - minVertex;
-	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 6;
+	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 30;
 
 	//int cellCnt = (int(tmpVertex.x/gridSize)+1) * (int(tmpVertex.y / gridSize)+1) * (int(tmpVertex.z / gridSize)+1);
 	axisX = (int(tmpVertex.x / gridSize) + 1);
 	axisY = (int(tmpVertex.y / gridSize) + 1);
 	axisZ = (int(tmpVertex.z / gridSize) + 1);
 
-	//printf("%d, %d, %d\n", axisX, axisY, axisZ);
+	printf("%d, %d, %d\n", axisX, axisY, axisZ);
 	initialize_cell();
+	printf("size of cell array = %d\n", sizeof(Cell) * axisX * axisY * axisZ);
 
 	//cells = new Cell[2][3][4];
 	//cells = new Cell[int(tmpVertex.x / gridSize) + 1][int(tmpVertex.y / gridSize) + 1][int(tmpVertex.z / gridSize) + 1];
@@ -494,6 +551,16 @@ bool MarchingCube::initialize_cell()
 				};
 				//printf("(%f, %f, %f)\n", cells[i][j][k].coordinate.x, cells[i][j][k].coordinate.y, cells[i][j][k].coordinate.z);
 				cells[i][j][k].set_vertex_with_coordinate(gridSize);
+				/*
+				printf("cells vertex 0 : (%f, %f, %f)\n", cells[i][j][k].vertex[0].x, cells[i][j][k].vertex[0].y, cells[i][j][k].vertex[0].z);
+				printf("cells vertex 1 : (%f, %f, %f)\n", cells[i][j][k].vertex[1].x, cells[i][j][k].vertex[1].y, cells[i][j][k].vertex[1].z);
+				printf("cells vertex 2 : (%f, %f, %f)\n", cells[i][j][k].vertex[2].x, cells[i][j][k].vertex[2].y, cells[i][j][k].vertex[2].z);
+				printf("cells vertex 3 : (%f, %f, %f)\n", cells[i][j][k].vertex[3].x, cells[i][j][k].vertex[3].y, cells[i][j][k].vertex[3].z);
+				printf("cells vertex 4 : (%f, %f, %f)\n", cells[i][j][k].vertex[4].x, cells[i][j][k].vertex[4].y, cells[i][j][k].vertex[4].z);
+				printf("cells vertex 5 : (%f, %f, %f)\n", cells[i][j][k].vertex[5].x, cells[i][j][k].vertex[5].y, cells[i][j][k].vertex[5].z);
+				printf("cells vertex 6 : (%f, %f, %f)\n", cells[i][j][k].vertex[6].x, cells[i][j][k].vertex[6].y, cells[i][j][k].vertex[6].z);
+				printf("cells vertex 7 : (%f, %f, %f)\n\n", cells[i][j][k].vertex[7].x, cells[i][j][k].vertex[7].y, cells[i][j][k].vertex[7].z);
+				*/
 			}
 		}
 	}
@@ -566,15 +633,15 @@ void MarchingCube::print_vtu(std::string filepath)
 
 	txt = "<UnstructuredGrid>\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-	txt = "<Piece NumberOfPoints=\"" + std::to_string(3) + "\" NumberOfCells=\"" + std::to_string(1) + "\">\n";
+	txt = "<Piece NumberOfPoints=\"" + std::to_string(h_triangles.size() * 3) + "\" NumberOfCells=\"" + std::to_string(h_triangles.size()) + "\">\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 	txt = "<Points>\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-	txt = "<DataArray type=\"Float64\" NumberOfComponents=\"" + std::to_string(h_triangles.size()*3) + "\" format=\"ascii\">\n";
+	txt = "<DataArray type=\"Float64\" NumberOfComponents=\"" + std::to_string(3) + "\" format=\"ascii\">\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 	txt = "";
 	for (int i = 0; i < h_triangles.size(); ++i) {
-		printf("triangle %d\n", i);
+		//printf("triangle %d\n", i);
 
 		txt += (std::to_string(h_triangles[i].t1.x) + " " + std::to_string(h_triangles[i].t1.y) + " " + std::to_string(h_triangles[i].t1.z) + "\n");
 		txt += (std::to_string(h_triangles[i].t2.x) + " " + std::to_string(h_triangles[i].t2.y) + " " + std::to_string(h_triangles[i].t2.z) + "\n");
@@ -582,17 +649,17 @@ void MarchingCube::print_vtu(std::string filepath)
 		//fwrite(&h_triangles[i].t1.x, sizeof(float), 1, file);
 		//fwrite(&h_triangles[i].t1.y, sizeof(float), 1, file);
 		//fwrite(&h_triangles[i].t1.z, sizeof(float), 1, file);
-		printf("(%f, %f, %f)\n", h_triangles[i].t1.x, h_triangles[i].t1.y, h_triangles[i].t1.z);
+		//printf("(%f, %f, %f)\n", h_triangles[i].t1.x, h_triangles[i].t1.y, h_triangles[i].t1.z);
 
 		//fwrite(&h_triangles[i].t2.x, sizeof(float), 1, file);
 		//fwrite(&h_triangles[i].t2.y, sizeof(float), 1, file);
 		//fwrite(&h_triangles[i].t2.z, sizeof(float), 1, file);
-		printf("(%f, %f, %f)\n", h_triangles[i].t2.x, h_triangles[i].t2.y, h_triangles[i].t2.z);
+		//printf("(%f, %f, %f)\n", h_triangles[i].t2.x, h_triangles[i].t2.y, h_triangles[i].t2.z);
 
 		//fwrite(&h_triangles[i].t3.x, sizeof(float), 1, file);
 		//fwrite(&h_triangles[i].t3.y, sizeof(float), 1, file);
 		//fwrite(&h_triangles[i].t3.z, sizeof(float), 1, file);
-		printf("(%f, %f, %f)\n", h_triangles[i].t3.x, h_triangles[i].t3.y, h_triangles[i].t3.z);
+		//printf("(%f, %f, %f)\n", h_triangles[i].t3.x, h_triangles[i].t3.y, h_triangles[i].t3.z);
 	}
 
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
@@ -609,7 +676,14 @@ void MarchingCube::print_vtu(std::string filepath)
 	txt = "<DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
-	txt = std::to_string(h_triangles.size() * 3) + "\n";
+	txt = "";
+
+	for (int i = 0; i < h_triangles.size(); ++i)
+	{
+		txt += std::to_string(i * 3) + " ";
+	}
+	txt += "\n";
+
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
 	txt = "</DataArray>\n";
@@ -632,7 +706,15 @@ void MarchingCube::print_vtu(std::string filepath)
 	txt = "<DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
-	txt = "5\n</DataArray>\n</Cells>\n</Piece>\n</UnstructuredGrid>\n</VTKFile>";
+	txt = "";
+	for (int i = 0; i < h_triangles.size(); ++i)
+	{
+		txt += "5 ";
+	}
+	txt += "\n";
+	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+	txt = "</DataArray>\n</Cells>\n</Piece>\n</UnstructuredGrid>\n</VTKFile>";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 	fclose(file);
 }

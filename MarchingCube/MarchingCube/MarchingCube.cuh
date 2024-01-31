@@ -332,5 +332,5 @@ public:
 	void print_txt(std::string filepath);
 	void print_vtu(std::string filepath);
 
-	void write_binary(std::string txt); //file 포인터를 class 멤버변수로 넣어야되는데 그럴거면 그냥 따로 파는게 나을지도
+	void write_binary(std::string txt);
 };
