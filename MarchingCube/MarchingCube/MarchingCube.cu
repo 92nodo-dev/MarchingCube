@@ -148,7 +148,6 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 		if (d_triTable[(usage * 16) + (i * 3) + 2] == 9) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[5]) * 0.5f;
 		if (d_triTable[(usage * 16) + (i * 3) + 2] == 10) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[6]) * 0.5f;
 		if (d_triTable[(usage * 16) + (i * 3) + 2] == 11) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[7]) * 0.5f;
-
 	}
 }
 
@@ -397,6 +396,7 @@ bool MarchingCube::generate_grid()
 	find_grid_minmax();
 
 	vec3 tmpVertex = maxVertex - minVertex;
+  
 	gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 50;
 
 	axisX = (int(tmpVertex.x / gridSize) + 1);
