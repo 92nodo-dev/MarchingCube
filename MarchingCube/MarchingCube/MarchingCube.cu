@@ -24,7 +24,7 @@ __global__ void compute_bit(Cell* cell, int x, int y, int z, float isoValue) {
 
 		avgDensity *= 0.125;
 
-		if (avgDensity > isoValue)
+		if (avgDensity < isoValue)
 		{
 			//printf("idx : %d\n", idx);
 			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].isUsingVertex[6] = true;
@@ -99,17 +99,56 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	if (usingEdge & 512)	cell[idx].edgeVertex[9] = (cell[idx].vertex[1] + cell[idx].vertex[5]) * 0.5f; 
 	if (usingEdge & 1024)	cell[idx].edgeVertex[10] = (cell[idx].vertex[2] + cell[idx].vertex[6]) * 0.5f; 
 	if (usingEdge & 2048)	cell[idx].edgeVertex[11] = (cell[idx].vertex[3] + cell[idx].vertex[7]) * 0.5f; 
-	
+
 	for (int i = 0; i < 5; i++)
 	{
 		if (d_triTable[(usage * 16) + (i * 3)] == -1) {
 			cell[idx].triangleCnt = i;
 			break;
 		}
-		cell[idx].triangles[i].t1 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)]];
-		cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)+1]];
-		cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i*3)+2]];
-		cell[idx].triangles[i].density = cell[idx].density;
+		cell[idx].triangles[i].t1 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i * 3)]];
+		cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i * 3) + 1]];
+		cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i * 3) + 2]];
+
+		if (d_triTable[(usage * 16) + (i * 3)] == 0) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[1]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 1) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[2]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 2) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[3]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 3) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[0]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 4) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[4] + cell[idx].valueOfVertex[5]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 5) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[5] + cell[idx].valueOfVertex[6]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 6) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[6] + cell[idx].valueOfVertex[7]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 7) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[7] + cell[idx].valueOfVertex[4]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 8) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[4]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 9) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[5]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 10) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[6]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3)] == 11) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[7]) * 0.5f;
+
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 0) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[1]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 1) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[2]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 2) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[3]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 3) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[0]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 4) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[4] + cell[idx].valueOfVertex[5]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 5) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[5] + cell[idx].valueOfVertex[6]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 6) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[6] + cell[idx].valueOfVertex[7]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 7) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[7] + cell[idx].valueOfVertex[4]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 8) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[4]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 9) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[5]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 10) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[6]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 1] == 11) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[7]) * 0.5f;
+
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 0) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[1]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 1) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[2]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 2) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[3]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 3) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[0]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 4) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[4] + cell[idx].valueOfVertex[5]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 5) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[5] + cell[idx].valueOfVertex[6]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 6) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[6] + cell[idx].valueOfVertex[7]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 7) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[7] + cell[idx].valueOfVertex[4]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 8) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[4]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 9) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[5]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 10) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[6]) * 0.5f;
+		if (d_triTable[(usage * 16) + (i * 3) + 2] == 11) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[7]) * 0.5f;
+
 	}
 }
 
@@ -538,19 +577,21 @@ void MarchingCube::print_vtu(std::string filepath)
 	txt = "</DataArray>\n</Cells>\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
-	txt = "<CellData>\n<DataArray type = \"Float32\" Name=\"Density\" format=\"ascii\">\n";
+	txt = "<PointData>\n<DataArray type = \"Float32\" Name=\"Density\" format=\"ascii\">\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
 	txt = "";
 
 	for (int i = 0; i < h_data.triangles.size(); ++i)
 	{
-		txt += std::to_string(h_data.triangles[i].density) + " ";
+		txt += std::to_string(h_data.triangles[i].density[0]) + " ";
+		txt += std::to_string(h_data.triangles[i].density[1]) + " ";
+		txt += std::to_string(h_data.triangles[i].density[2]) + " ";
 	}
 	txt += "\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
-	txt = "</DataArray>\n</CellData>\n";
+	txt = "</DataArray>\n</PointData>\n";
 	fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
 	txt = "</Piece>\n</UnstructuredGrid>\n</VTKFile>";

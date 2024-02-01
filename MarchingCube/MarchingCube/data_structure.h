@@ -20,7 +20,7 @@ struct Triangle {
 	vec3 t2;
 	vec3 t3;
 
-	float density;
+	float density[3];
 };
 
 struct Particle {
