@@ -45,6 +45,7 @@ public:
 	bool initialize_cell();
 	bool put_density_into_cell();
 	void make_triangle_arr();
+	void flatten_cell_density();
 
 	void compute_cell_bit(float isoValue);
 	void alloc_device_memory();
