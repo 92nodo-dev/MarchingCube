@@ -15,7 +15,7 @@ int main()
 
 	MarchingCube mc;
 	mc.get_vertices_by_txt("D:\\position2.txt", "D:\\density2.txt");
-	mc.make_polygon_with_particles(500.0);
+	mc.make_polygon_with_particles(30.0);
 	//mc.make_polygon_with_particles(testVertex, 20.0);
 	//mc.print_txt("test.txt");
 	mc.print_vtu("test.vtu");
