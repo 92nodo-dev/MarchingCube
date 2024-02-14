@@ -606,7 +606,7 @@ bool MarchingCube::initialize_cell()
 		{
 			for (int k = 0; k < axisZ; ++k)
 			{
-				h_data.cells[(i*axisY * axisZ)+(j*axisZ)+k].coordinate = vec3{
+				h_data.cells[(i * axisY * axisZ) + (j * axisZ) + k].coordinate = vec3{
 					minVertex.x + (gridSize / 2) + gridSize * i,
 					minVertex.y + (gridSize / 2) + gridSize * j,
 					minVertex.z + (gridSize / 2) + gridSize * k
