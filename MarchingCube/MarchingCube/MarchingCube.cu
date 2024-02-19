@@ -237,7 +237,7 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 		cell[idx].edgeVertex[11] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
 	}
 
-	/*
+/*
 	if (usingEdge & 1)		cell[idx].edgeVertex[0] = cell[idx].vertex[0] +((cell[idx].vertex[1] - cell[idx].vertex[0]) * ((isoValue - cell[idx].valueOfVertex[0]) / (cell[idx].valueOfVertex[1] - cell[idx].valueOfVertex[0])));
 	if (usingEdge & 2)		cell[idx].edgeVertex[1] = cell[idx].vertex[1] + ((cell[idx].vertex[2] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[2] - cell[idx].valueOfVertex[1])));
 	if (usingEdge & 4)		cell[idx].edgeVertex[2] = cell[idx].vertex[2] + ((cell[idx].vertex[3] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[3] - cell[idx].valueOfVertex[2])));
@@ -252,9 +252,9 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	if (usingEdge & 512)	cell[idx].edgeVertex[9] = cell[idx].vertex[1] + ((cell[idx].vertex[5] - cell[idx].vertex[1]) * ((isoValue - cell[idx].valueOfVertex[1]) / (cell[idx].valueOfVertex[5] - cell[idx].valueOfVertex[1])));
 	if (usingEdge & 1024)	cell[idx].edgeVertex[10] = cell[idx].vertex[2] + ((cell[idx].vertex[6] - cell[idx].vertex[2]) * ((isoValue - cell[idx].valueOfVertex[2]) / (cell[idx].valueOfVertex[6] - cell[idx].valueOfVertex[2])));
 	if (usingEdge & 2048)	cell[idx].edgeVertex[11] = cell[idx].vertex[3] + ((cell[idx].vertex[7] - cell[idx].vertex[3]) * ((isoValue - cell[idx].valueOfVertex[3]) / (cell[idx].valueOfVertex[7] - cell[idx].valueOfVertex[3])));
-	*/
+*/
 
-	/*
+/*
 	if (usingEdge & 1)		cell[idx].edgeVertex[0] = (cell[idx].vertex[0] + cell[idx].vertex[1]) * 0.5f;
 	if (usingEdge & 2)		cell[idx].edgeVertex[1] = (cell[idx].vertex[1] + cell[idx].vertex[2]) * 0.5f;
 	if (usingEdge & 4)		cell[idx].edgeVertex[2] = (cell[idx].vertex[2] + cell[idx].vertex[3]) * 0.5f; 
@@ -269,7 +269,7 @@ __global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_tr
 	if (usingEdge & 512)	cell[idx].edgeVertex[9] = (cell[idx].vertex[1] + cell[idx].vertex[5]) * 0.5f; 
 	if (usingEdge & 1024)	cell[idx].edgeVertex[10] = (cell[idx].vertex[2] + cell[idx].vertex[6]) * 0.5f; 
 	if (usingEdge & 2048)	cell[idx].edgeVertex[11] = (cell[idx].vertex[3] + cell[idx].vertex[7]) * 0.5f; 
-	*/
+*/
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -366,7 +366,7 @@ void MarchingCube::make_triangle(float isoValue)
 
 void MarchingCube::make_triangle_arr()
 {
-	/*
+/*
 	int d_idx = 0;
 	for (int i = 0; i < axisX; ++i)
 	{
@@ -378,7 +378,8 @@ void MarchingCube::make_triangle_arr()
 				d_idx++;
 			}
 		}
-	}*/
+	}
+*/
 
 	printf("tssdf23423523523etset\n");
 	cudaMemcpy(h_data.cells, d_data.cells, sizeof(Cell)* axisX* axisY* axisZ, cudaMemcpyDeviceToHost);
@@ -417,7 +418,7 @@ void MarchingCube::alloc_device_memory()
 
 	cudaMemcpy(d_data.edgeTable, h_data.edgeTable, 256 * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_data.triangleTable, h_data.triangleTable, 256 * 16 * sizeof(short int), cudaMemcpyHostToDevice);
-	/*
+/*
 	for (int i = 0; i < axisX; ++i)
 	{
 		for (int j = 0; j < axisY; ++j)
@@ -429,7 +430,8 @@ void MarchingCube::alloc_device_memory()
 				d_idx++;
 			}
 		}
-	}    */
+	}    
+*/
 
 	cudaMemcpy(d_data.cells, h_data.cells, sizeof(Cell) * axisX * axisY * axisZ, cudaMemcpyHostToDevice);
 	printf("inside alloc device memory\n");
