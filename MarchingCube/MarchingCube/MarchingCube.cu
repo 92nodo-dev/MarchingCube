@@ -624,6 +624,11 @@ bool MarchingCube::initialize_cell()
 	return true;
 }
 
+bool MarchingCube::get_vertices_by_vtu(std::string filepath)
+{
+
+}
+
 bool MarchingCube::find_grid_minmax()
 {
 	if (particleSize == 0) {
