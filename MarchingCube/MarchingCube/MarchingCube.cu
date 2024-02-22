@@ -624,6 +624,21 @@ bool MarchingCube::initialize_cell()
 	return true;
 }
 
+bool MarchingCube::get_vertices_by_vtu(std::string filepath)
+{
+	std::string line;
+	std::ifstream file(filepath);
+	bool isInsidePoint = false;
+	if (file.is_open()) {
+		while (std::getline(file, line)) {
+			if (line.find("<DataArray") != std::string::npos) {
+				// npos는 못찾은 경우
+				// 이런식으로 찾아들어가면될듯 line 별로
+			}
+		}
+	}
+}
+
 bool MarchingCube::find_grid_minmax()
 {
 	if (particleSize == 0) {

@@ -38,6 +38,7 @@ public:
 	~MarchingCube() {};
 
 	bool get_vertices_by_txt(std::string filepath, std::string densityPath);
+	bool get_vertices_by_vtu(std::string filepath);
 	bool make_polygon_with_particles(float isoValue);
 	bool make_polygon_with_particles(std::vector<vec3> vertices, float isoValue);
 	bool generate_grid();
