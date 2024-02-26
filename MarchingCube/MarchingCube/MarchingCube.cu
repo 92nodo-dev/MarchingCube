@@ -629,7 +629,35 @@ bool MarchingCube::get_vertices_by_vtk(std::string filepath)
 	std::string line;
 	char* testLine;
 	std::ifstream file(filepath);
-	bool isInsidePoint = false;
+
+	if (!file.is_open()) {
+		std::cerr << "파일을 열 수 없습니다." << std::endl;
+		return 1;
+	}
+
+	while (std::getline(file, line)) {
+		if (line.find("POLYDATA") != std::string::npos) {
+			std::cout << line << std::endl;
+			break;
+		}
+	}
+	std::string tmpStr;
+	file >> tmpStr;
+	int numFloats;
+	file >> numFloats;
+
+	std::cout << numFloats << std::endl;
+
+	std::vector<float> floatData(numFloats);
+	file.read(reinterpret_cast<char*>(floatData.data()), numFloats * sizeof(float));
+
+	// 데이터 출력
+	for (float value : floatData) {
+		std::cout << value << std::endl;
+	}
+
+	file.close();
+	/*
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
 			if (isInsidePoint) {
@@ -641,6 +669,7 @@ bool MarchingCube::get_vertices_by_vtk(std::string filepath)
 			}
 		}
 	}
+	*/
 	return true;
 }
 
