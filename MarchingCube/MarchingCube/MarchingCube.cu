@@ -624,19 +624,24 @@ bool MarchingCube::initialize_cell()
 	return true;
 }
 
-bool MarchingCube::get_vertices_by_vtu(std::string filepath)
+bool MarchingCube::get_vertices_by_vtk(std::string filepath)
 {
 	std::string line;
+	char* testLine;
 	std::ifstream file(filepath);
 	bool isInsidePoint = false;
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
-			if (line.find("<DataArray") != std::string::npos) {
-				// npos는 못찾은 경우
-				// 이런식으로 찾아들어가면될듯 line 별로
+			if (isInsidePoint) {
+				file.read(testLine, 282900 * sizeof(float));
+				printf("%s\n", testLine);
+			}
+			if (line.find("POINTS") != std::string::npos) {
+				isInsidePoint = true;
 			}
 		}
 	}
+	return true;
 }
 
 bool MarchingCube::find_grid_minmax()
