@@ -654,15 +654,29 @@ bool MarchingCube::get_vertices_by_vtk(std::string filepath)
 			break;
 		}
 	}
-	std::vector<char> floatData(numFloats);
-	file.read(reinterpret_cast<char*>(floatData.data()), numFloats * sizeof(char));
 
+	//std::getline(file, line);
+	//std::cout << line << std::endl;
+
+	std::vector<unsigned char> floatData(numFloats * sizeof(unsigned char));
+
+	file.read(reinterpret_cast<char*>(floatData.data()), numFloats * sizeof(unsigned char));
+	/*
 	// 데이터 출력
-	for (char value : floatData) {
+	for (unsigned char value : floatData) {
+		std::cout << static_cast<int>(value) << " "; // 또는 다른 방식으로 출력하세요
+	}
+	
+	std::vector<unsigned char*> floatData(numFloats);
+	file.read(reinterpret_cast<unsigned char*>(floatData.data()), numFloats * sizeof(unsigned char));
+	*/
+	// 데이터 출력
+	for (unsigned char value : floatData) {
 		std::cout << value << std::endl;
 	}
 
 	file.close();
+	
 	/*
 	if (file.is_open()) {
 		while (std::getline(file, line)) {
