@@ -648,11 +648,17 @@ bool MarchingCube::get_vertices_by_vtk(std::string filepath)
 
 	std::cout << numFloats << std::endl;
 
-	std::vector<float> floatData(numFloats);
-	file.read(reinterpret_cast<char*>(floatData.data()), numFloats * sizeof(float));
+	while (std::getline(file, line)) {
+		if (line.find("VERTICES") != std::string::npos) {
+			std::cout << line << std::endl;
+			break;
+		}
+	}
+	std::vector<char> floatData(numFloats);
+	file.read(reinterpret_cast<char*>(floatData.data()), numFloats * sizeof(char));
 
 	// 데이터 출력
-	for (float value : floatData) {
+	for (char value : floatData) {
 		std::cout << value << std::endl;
 	}
 
