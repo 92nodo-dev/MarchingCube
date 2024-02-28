@@ -645,35 +645,50 @@ bool MarchingCube::get_vertices_by_vtk(std::string filepath)
 	file >> tmpStr;
 	int numFloats;
 	file >> numFloats;
+	file >> tmpStr;
+	float* tmpFloat;
 
 	std::cout << numFloats << std::endl;
 
+	tmpFloat = new float[numFloats];
+
+	for (int i = 0; i < numFloats; ++i)
+	{
+		tmpFloat[i] = 0.0;
+		file >> tmpFloat[i];
+		std::cout << tmpFloat[i] << std::endl;
+	}
+	/*
+	std::cout << numFloats << std::endl;
+
 	while (std::getline(file, line)) {
-		if (line.find("VERTICES") != std::string::npos) {
+		if (line.find("POINTS") != std::string::npos) {
 			std::cout << line << std::endl;
 			break;
 		}
 	}
-
+	*/
 	//std::getline(file, line);
 	//std::cout << line << std::endl;
 
+	/*
 	std::vector<unsigned char> floatData(numFloats * sizeof(unsigned char));
 
 	file.read(reinterpret_cast<char*>(floatData.data()), numFloats * sizeof(unsigned char));
-	/*
-	// 데이터 출력
+
+	//file.read()
 	for (unsigned char value : floatData) {
-		std::cout << static_cast<int>(value) << " "; // 또는 다른 방식으로 출력하세요
+		std::cout << static_cast<int>(value) << " ";
 	}
 	
-	std::vector<unsigned char*> floatData(numFloats);
-	file.read(reinterpret_cast<unsigned char*>(floatData.data()), numFloats * sizeof(unsigned char));
 	*/
-	// 데이터 출력
-	for (unsigned char value : floatData) {
-		std::cout << value << std::endl;
-	}
+
+	//std::vector<float> floatData(numFloats);
+	//file.read(reinterpret_cast<char*>(floatData.data()), numFloats * sizeof(float));
+
+	//for (float value : floatData) {
+	//	std::cout << value << std::endl;
+	//}
 
 	file.close();
 	
