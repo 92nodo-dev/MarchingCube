@@ -648,10 +648,13 @@ bool MarchingCube::get_vertices_by_vtk(std::string filepath)
 	file >> tmpStr;
 	float* tmpFloat;
 
+	std::cout << numFloats << std::endl;
+
 	tmpFloat = new float[numFloats];
 
 	for (int i = 0; i < numFloats; ++i)
 	{
+		tmpFloat[i] = 0.0;
 		file >> tmpFloat[i];
 		std::cout << tmpFloat[i] << std::endl;
 	}
