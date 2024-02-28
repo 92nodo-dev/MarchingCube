@@ -857,6 +857,14 @@ void MarchingCube::print_vtu(std::string filepath)
 	fclose(file);
 }
 
+void MarchingCube::set_density() {
+
+}
+void MarchingCube::set_vertices()
+{
+
+}
+
 void MarchingCube::write_binary(std::string txt)
 {
 

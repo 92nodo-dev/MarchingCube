@@ -55,6 +55,9 @@ public:
 
 	void free_device_memory();
 
+	void set_density();
+	void set_vertices();
+
 	//void compute_vertex_density();
 	void print_txt(std::string filepath);
 	void print_vtu(std::string filepath);
