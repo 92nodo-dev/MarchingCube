@@ -47,6 +47,8 @@ public:
 	bool put_density_into_cell();
 	void make_triangle_arr();
 	void flatten_cell_density();
+	void set_particles();
+	Particle* get_particles() { return particles; }
 
 	void compute_cell_bit(float isoValue);
 	void alloc_device_memory();
