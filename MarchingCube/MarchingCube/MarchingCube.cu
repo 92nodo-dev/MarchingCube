@@ -869,3 +869,10 @@ void MarchingCube::write_binary(std::string txt)
 {
 
 }
+
+
+void MarchingCube::allocate_particles(int size)
+{
+	particles = new Particle[size];
+	particleSize = size;
+}
