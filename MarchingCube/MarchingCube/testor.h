@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "data_structure.h"
 
+using namespace MarchingCube;
+
 class Testor {
 private :
 	std::vector<vec3> vertices;
