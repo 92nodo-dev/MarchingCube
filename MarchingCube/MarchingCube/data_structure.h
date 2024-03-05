@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+namespace MarchingCube {
+
 struct vec3 {
 	float x;
 	float y;
@@ -365,3 +367,5 @@ struct HostData {
 
 	}
 };
+
+}
