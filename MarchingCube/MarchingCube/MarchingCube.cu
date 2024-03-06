@@ -532,6 +532,8 @@ namespace MarchingCube {
 
 		make_triangle_arr();
 
+		free_device_memory();
+
 		return true;
 	}
 
@@ -564,6 +566,8 @@ namespace MarchingCube {
 			printf("CUDA Success\n");
 		}
 		printf("inside make_cell_triangle\n");
+
+		free_device_memory();
 		return true;
 	}
 
