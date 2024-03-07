@@ -13,6 +13,7 @@ namespace MarchingCube {
 		if ((xIndex % x != 0) && (yIndex % y != 0) && (zIndex % z != 0))
 		{
 			float avgDensity = 0;
+			float avgPressure = 0;
 
 			avgDensity += cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].density;
 			avgDensity += cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].density;
@@ -23,7 +24,17 @@ namespace MarchingCube {
 			avgDensity += cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].density;
 			avgDensity += cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].density;
 
+			avgPressure += cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].pressure;
+			avgPressure += cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].pressure;
+			avgPressure += cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex)].pressure;
+			avgPressure += cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex - 1)].pressure;
+			avgPressure += cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1)].pressure;
+			avgPressure += cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex)].pressure;
+			avgPressure += cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].pressure;
+			avgPressure += cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].pressure;
+
 			avgDensity *= 0.125;
+			avgPressure *= 0.125;
 
 			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].valueOfVertex[6] = avgDensity;
 			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].valueOfVertex[2] = avgDensity;
@@ -33,6 +44,15 @@ namespace MarchingCube {
 			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex)].valueOfVertex[3] = avgDensity;
 			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].valueOfVertex[0] = avgDensity;
 			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].valueOfVertex[4] = avgDensity;
+
+			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].pressureOfVertex[6] = avgPressure;
+			cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].pressureOfVertex[2] = avgPressure;
+			cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex)].pressureOfVertex[1] = avgPressure;
+			cell[(z * y * (xIndex - 1)) + (z * (yIndex)) + (zIndex - 1)].pressureOfVertex[5] = avgPressure;
+			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex - 1)].pressureOfVertex[7] = avgPressure;
+			cell[(z * y * (xIndex)) + (z * (yIndex - 1)) + (zIndex)].pressureOfVertex[3] = avgPressure;
+			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].pressureOfVertex[0] = avgPressure;
+			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].pressureOfVertex[4] = avgPressure;
 
 			if (avgDensity < isoValue)
 			{
@@ -282,44 +302,44 @@ namespace MarchingCube {
 			cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i * 3) + 1]];
 			cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i * 3) + 2]];
 
-			if (d_triTable[(usage * 16) + (i * 3)] == 0) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[1]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 1) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[2]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 2) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[3]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 3) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[0]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 4) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[4] + cell[idx].valueOfVertex[5]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 5) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[5] + cell[idx].valueOfVertex[6]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 6) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[6] + cell[idx].valueOfVertex[7]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 7) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[7] + cell[idx].valueOfVertex[4]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 8) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[4]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 9) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[5]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 10) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[6]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3)] == 11) cell[idx].triangles[i].density[0] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[7]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 0) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[0] + cell[idx].pressureOfVertex[1]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 1) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[1] + cell[idx].pressureOfVertex[2]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 2) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[2] + cell[idx].pressureOfVertex[3]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 3) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[3] + cell[idx].pressureOfVertex[0]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 4) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[4] + cell[idx].pressureOfVertex[5]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 5) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[5] + cell[idx].pressureOfVertex[6]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 6) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[6] + cell[idx].pressureOfVertex[7]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 7) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[7] + cell[idx].pressureOfVertex[4]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 8) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[0] + cell[idx].pressureOfVertex[4]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 9) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[1] + cell[idx].pressureOfVertex[5]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 10) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[2] + cell[idx].pressureOfVertex[6]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3)] == 11) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[3] + cell[idx].pressureOfVertex[7]) * 0.5f;
 
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 0) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[1]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 1) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[2]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 2) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[3]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 3) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[0]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 4) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[4] + cell[idx].valueOfVertex[5]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 5) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[5] + cell[idx].valueOfVertex[6]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 6) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[6] + cell[idx].valueOfVertex[7]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 7) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[7] + cell[idx].valueOfVertex[4]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 8) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[4]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 9) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[5]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 10) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[6]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 1] == 11) cell[idx].triangles[i].density[1] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[7]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 0) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[0] + cell[idx].pressureOfVertex[1]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 1) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[1] + cell[idx].pressureOfVertex[2]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 2) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[2] + cell[idx].pressureOfVertex[3]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 3) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[3] + cell[idx].pressureOfVertex[0]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 4) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[4] + cell[idx].pressureOfVertex[5]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 5) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[5] + cell[idx].pressureOfVertex[6]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 6) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[6] + cell[idx].pressureOfVertex[7]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 7) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[7] + cell[idx].pressureOfVertex[4]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 8) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[0] + cell[idx].pressureOfVertex[4]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 9) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[1] + cell[idx].pressureOfVertex[5]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 10) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[2] + cell[idx].pressureOfVertex[6]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 1] == 11) cell[idx].triangles[i].pressure[1] = (cell[idx].pressureOfVertex[3] + cell[idx].pressureOfVertex[7]) * 0.5f;
 
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 0) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[1]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 1) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[2]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 2) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[3]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 3) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[0]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 4) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[4] + cell[idx].valueOfVertex[5]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 5) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[5] + cell[idx].valueOfVertex[6]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 6) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[6] + cell[idx].valueOfVertex[7]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 7) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[7] + cell[idx].valueOfVertex[4]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 8) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[0] + cell[idx].valueOfVertex[4]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 9) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[1] + cell[idx].valueOfVertex[5]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 10) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[2] + cell[idx].valueOfVertex[6]) * 0.5f;
-			if (d_triTable[(usage * 16) + (i * 3) + 2] == 11) cell[idx].triangles[i].density[2] = (cell[idx].valueOfVertex[3] + cell[idx].valueOfVertex[7]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 0) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[0] + cell[idx].pressureOfVertex[1]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 1) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[1] + cell[idx].pressureOfVertex[2]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 2) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[2] + cell[idx].pressureOfVertex[3]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 3) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[3] + cell[idx].pressureOfVertex[0]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 4) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[4] + cell[idx].pressureOfVertex[5]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 5) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[5] + cell[idx].pressureOfVertex[6]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 6) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[6] + cell[idx].pressureOfVertex[7]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 7) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[7] + cell[idx].pressureOfVertex[4]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 8) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[0] + cell[idx].pressureOfVertex[4]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 9) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[1] + cell[idx].pressureOfVertex[5]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 10) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[2] + cell[idx].pressureOfVertex[6]) * 0.5f;
+			if (d_triTable[(usage * 16) + (i * 3) + 2] == 11) cell[idx].triangles[i].pressure[2] = (cell[idx].pressureOfVertex[3] + cell[idx].pressureOfVertex[7]) * 0.5f;
 		}
 	}
 
@@ -600,6 +620,10 @@ namespace MarchingCube {
 		{
 			h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].density += particles[i].density / h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt;
 		}
+		for (int i = 0; i < particleSize; ++i)
+		{
+			h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].pressure += particles[i].pressure / h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt;
+		}
 		return true;
 	}
 
@@ -847,9 +871,9 @@ namespace MarchingCube {
 
 		for (int i = 0; i < h_data.triangles.size(); ++i)
 		{
-			txt += std::to_string(h_data.triangles[i].density[0]) + " ";
-			txt += std::to_string(h_data.triangles[i].density[1]) + " ";
-			txt += std::to_string(h_data.triangles[i].density[2]) + " ";
+			txt += std::to_string(h_data.triangles[i].pressure[0]) + " ";
+			txt += std::to_string(h_data.triangles[i].pressure[1]) + " ";
+			txt += std::to_string(h_data.triangles[i].pressure[2]) + " ";
 		}
 		txt += "\n";
 		fwrite(txt.c_str(), sizeof(char), txt.size(), file);

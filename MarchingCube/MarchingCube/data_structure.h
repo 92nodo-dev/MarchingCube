@@ -23,16 +23,19 @@ struct Triangle {
 	vec3 t3;
 
 	float density[3];
+	float pressure[3];
 };
 
 struct Particle {
 	vec3 position;
 	float density;
+	float pressure;
 };
 
 struct Cell {
 	int index;
 	float density;
+	float pressure;
 	int particleCnt;
 	int vertexCase;
 
@@ -41,6 +44,7 @@ struct Cell {
 	Triangle triangles[5];
 	bool isUsingVertex[8] = { false, };
 	float valueOfVertex[8] = { 0, };
+	float pressureOfVertex[8] = { 0, };
 
 	int triangleCnt = -1;
 
@@ -50,6 +54,7 @@ struct Cell {
 	{ 
 		particleCnt = 0; 
 		density = 0;
+		pressure = 0;
 		for (int i = 0; i < 12; ++i)
 		{
 			edgeVertex[i] = vec3{ 0.0f,0.0f,0.0f };
