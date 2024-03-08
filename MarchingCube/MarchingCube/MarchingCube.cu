@@ -54,8 +54,9 @@ namespace MarchingCube {
 			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex)].pressureOfVertex[0] = avgPressure;
 			cell[(z * y * (xIndex)) + (z * (yIndex)) + (zIndex - 1)].pressureOfVertex[4] = avgPressure;
 
-			if (avgDensity < isoValue)
+			if ((avgDensity < isoValue) && (avgDensity > 0))
 			{
+				//printf("density : %f\n", avgDensity);
 				//printf("idx : %d\n", idx);
 				cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex - 1)].isUsingVertex[6] = true;
 				cell[(z * y * (xIndex - 1)) + (z * (yIndex - 1)) + (zIndex)].isUsingVertex[2] = true;
@@ -71,6 +72,11 @@ namespace MarchingCube {
 
 	__global__ void make_cell_triangle(Cell* cell, int* d_edgeTable, short int* d_triTable, int x, int y, int z, float isoValue) {
 		int idx = blockDim.x * blockIdx.x + threadIdx.x;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			cell[idx].edgeIndex[i] = idx * 16 + i;
+		}
 
 		int usage = 0;
 
@@ -91,6 +97,7 @@ namespace MarchingCube {
 		vec3 p1, p2;
 		if (usingEdge & 1)
 		{
+			//printf("wetwetwetwet");
 			v1 = cell[idx].valueOfVertex[1] < cell[idx].valueOfVertex[0] ? cell[idx].valueOfVertex[1] : cell[idx].valueOfVertex[0];
 			v2 = cell[idx].valueOfVertex[1] > cell[idx].valueOfVertex[0] ? cell[idx].valueOfVertex[1] : cell[idx].valueOfVertex[0];
 			p1 = cell[idx].valueOfVertex[1] < cell[idx].valueOfVertex[0] ? cell[idx].vertex[1] : cell[idx].vertex[0];
@@ -99,9 +106,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[0] = (cell[idx].vertex[0] + cell[idx].vertex[1]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[0] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[0] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[0] = true;
 		}
 		if (usingEdge & 2)
 		{
@@ -113,9 +120,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[1] = (cell[idx].vertex[1] + cell[idx].vertex[2]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[1] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else	cell[idx].edgeVertex[1] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[1] = true;
 		}
 		if (usingEdge & 4)
 		{
@@ -127,9 +134,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[2] = (cell[idx].vertex[3] + cell[idx].vertex[2]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[2] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[2] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[2] = true;
 		}
 		if (usingEdge & 8)
 		{
@@ -141,9 +148,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[3] = (cell[idx].vertex[0] + cell[idx].vertex[3]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[3] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[3] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[3] = true;
 		}
 		if (usingEdge & 16)
 		{
@@ -155,9 +162,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[4] = (cell[idx].vertex[4] + cell[idx].vertex[5]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[4] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[4] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[4] = true;
 		}
 		if (usingEdge & 32)
 		{
@@ -169,9 +176,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[5] = (cell[idx].vertex[5] + cell[idx].vertex[6]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[5] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[5] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[5] = true;
 		}
 		if (usingEdge & 64)
 		{
@@ -183,9 +190,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[6] = (cell[idx].vertex[6] + cell[idx].vertex[7]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[6] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[6] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[6] = true;
 		}
 		if (usingEdge & 128)
 		{
@@ -197,9 +204,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[7] = (cell[idx].vertex[7] + cell[idx].vertex[4]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[7] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[7] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[7] = true;
 		}
 		if (usingEdge & 256)
 		{
@@ -211,9 +218,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[8] = (cell[idx].vertex[0] + cell[idx].vertex[4]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[8] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[8] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[8] = true;
 		}
 		if (usingEdge & 512)
 		{
@@ -225,9 +232,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[9] = (cell[idx].vertex[1] + cell[idx].vertex[5]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[9] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[9] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[9] = true;
 		}
 		if (usingEdge & 1024)
 		{
@@ -239,9 +246,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[10] = (cell[idx].vertex[2] + cell[idx].vertex[6]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[10] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[10] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[10] = true;
 		}
 		if (usingEdge & 2048)
 		{
@@ -253,9 +260,9 @@ namespace MarchingCube {
 			k2 = isoValue - v1;
 			if ((k1 <= 0) || (k2 <= 0)) {
 				cell[idx].edgeVertex[11] = (cell[idx].vertex[3] + cell[idx].vertex[7]) * 0.5f;
-				return;
 			}
-			cell[idx].edgeVertex[11] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			else cell[idx].edgeVertex[11] = ((p1 * k1) + (p2 * k2)) * (1 / (k1 + k2));
+			cell[idx].usingEdge[11] = true;
 		}
 
 		/*
@@ -298,9 +305,15 @@ namespace MarchingCube {
 				cell[idx].triangleCnt = i;
 				break;
 			}
+			cell[idx].triangles[i].a = d_triTable[(usage * 16) + (i * 3)];
+			cell[idx].triangles[i].b = d_triTable[(usage * 16) + (i * 3) + 1];
+			cell[idx].triangles[i].c = d_triTable[(usage * 16) + (i * 3) + 2];
+
+			
 			cell[idx].triangles[i].t1 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i * 3)]];
 			cell[idx].triangles[i].t2 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i * 3) + 1]];
 			cell[idx].triangles[i].t3 = cell[idx].edgeVertex[d_triTable[(usage * 16) + (i * 3) + 2]];
+			
 
 			if (d_triTable[(usage * 16) + (i * 3)] == 0) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[0] + cell[idx].pressureOfVertex[1]) * 0.5f;
 			if (d_triTable[(usage * 16) + (i * 3)] == 1) cell[idx].triangles[i].pressure[0] = (cell[idx].pressureOfVertex[1] + cell[idx].pressureOfVertex[2]) * 0.5f;
@@ -402,7 +415,7 @@ namespace MarchingCube {
 			}
 		*/
 
-		printf("tssdf23423523523etset\n");
+		//printf("tssdf23423523523etset\n");
 		cudaMemcpy(h_data.cells, d_data.cells, sizeof(Cell) * axisX * axisY * axisZ, cudaMemcpyDeviceToHost);
 		cudaError_t err = cudaGetLastError();
 		if (cudaSuccess != err) {
@@ -412,7 +425,7 @@ namespace MarchingCube {
 		else {
 			printf("CUDA Success\n");
 		}
-		printf("tsetsetsetset\n");
+		//printf("tsetsetsetset\n");
 		for (int i = 0; i < axisX; ++i)
 		{
 			for (int j = 0; j < axisY; ++j)
@@ -596,7 +609,7 @@ namespace MarchingCube {
 		find_grid_minmax();
 
 		vec3 tmpVertex = maxVertex - minVertex;
-		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 30;
+		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 80;
 
 		axisX = (int(tmpVertex.x / gridSize) + 3);
 		axisY = (int(tmpVertex.y / gridSize) + 3);
@@ -614,8 +627,10 @@ namespace MarchingCube {
 		for (int i = 0; i < particleSize; ++i)
 		{
 			h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt++;
+			h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].density = 1;
 		}
 
+		/*
 		for (int i = 0; i < particleSize; ++i)
 		{
 			h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].density += particles[i].density / h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt;
@@ -623,7 +638,7 @@ namespace MarchingCube {
 		for (int i = 0; i < particleSize; ++i)
 		{
 			h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].pressure += particles[i].pressure / h_data.cells[(int((particles[i].position.x - minVertex.x) / gridSize) * axisY * axisZ) + (int((particles[i].position.y - minVertex.y) / gridSize) * axisZ) + int((particles[i].position.z - minVertex.z) / gridSize)].particleCnt;
-		}
+		}*/
 		return true;
 	}
 
@@ -968,7 +983,7 @@ namespace MarchingCube {
 
 		txt << "POLYDATA poly\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-		txt << "BINARY\n";
+		txt << "ASCII\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 		txt << "DATASET POLYDATA\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
@@ -977,6 +992,34 @@ namespace MarchingCube {
 		//txt = "";
 		//fwrite(txt.str().data(), txt.str().size(), 1, file);
 		unsigned char* bytes;
+		int pointIndex = 0;
+		std::vector<vec3> writingPoint;
+
+		for (int i = 0; i < h_data.triangles.size(); ++i) {
+			bool isInsideWritingPoint = false;
+			for (int j = 0; j < writingPoint.size(); ++j) {
+				if ((h_data.triangles[i].t1.x == writingPoint[j].x) && (h_data.triangles[i].t1.y == writingPoint[j].y) && (h_data.triangles[i].t1.z == writingPoint[j].z)) {
+					isInsideWritingPoint = true;
+					break;
+				}
+			}
+			if (isInsideWritingPoint) continue;
+			writingPoint.push_back(vec3{ h_data.triangles[i].t1.x,h_data.triangles[i].t1.y,h_data.triangles[i].t1.z });
+		}
+		for (int i = 0; i < axisX * axisY * axisZ; ++i)
+		{
+			for (int j = 0; j < 12; ++j)
+			{
+				if (h_data.cells[i].usingEdge[j]) {
+					h_data.cells[i].edgeIndex[j] = pointIndex;
+					pointIndex++;
+				}
+			}
+			for (int i = 0; i < h_data.triangles.size(); ++i)
+			{
+				if (h_data.triangles[i].a)
+			}
+		}
 		for (int i = 0; i < h_data.triangles.size(); ++i) {
 			/*
 			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t1.x);
@@ -1025,7 +1068,7 @@ namespace MarchingCube {
 		//fwrite(&testNum, sizeof(int), 1, file);
 		bytes = reinterpret_cast<unsigned char*>(&testNum);
 		//fwrite(bytes, sizeof(bytes), 1, file);
-		std::cout << testNum << " ";
+		//std::cout << testNum << " ";
 		for (int i = 0; i < h_data.triangles.size() * 3; ++i)
 		{
 			int tmpI = i;
@@ -1033,13 +1076,13 @@ namespace MarchingCube {
 				bytes = reinterpret_cast<unsigned char*>(&tmpI);
 				//fwrite(bytes, sizeof(bytes), 1, file);
 				txt3 << std::to_string(tmpI) << "\n";
-				std::cout << tmpI << "\n";
+				//std::cout << tmpI << "\n";
 				if (i == (h_data.triangles.size() * 3) - 1) break;
 				bytes = reinterpret_cast<unsigned char*>(&testNum);
 				txt3 << "3 ";
 				//fwrite(txt3.str().data(), txt3.str().size(), 1, file);
 				//fwrite(bytes, sizeof(bytes), 1, file);
-				std::cout << testNum << " ";
+				//std::cout << testNum << " ";
 
 				//txt += (std::to_string(i) + "\n3 ");
 			}
@@ -1049,8 +1092,8 @@ namespace MarchingCube {
 				//fwrite(bytes, sizeof(bytes), 1, file);
 				txt3 << std::to_string(tmpI) << " ";
 
-				std::cout << tmpI << " ";
-			}
+				//std::cout << tmpI << " ";
+			}//
 		}
 		//fwrite(&txt, sizeof(txt), 1, file);
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
