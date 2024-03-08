@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "data_structure.h"
 
 #include "MarchingCube.cuh"
@@ -67,6 +68,7 @@ public:
 	//void compute_vertex_density();
 	void print_txt(std::string filepath);
 	void print_vtu(std::string filepath);
+	void print_vtk(std::string filepath);
 
 	void write_binary(std::string txt);
 };

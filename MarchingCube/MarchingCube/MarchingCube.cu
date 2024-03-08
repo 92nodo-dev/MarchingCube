@@ -596,7 +596,7 @@ namespace MarchingCube {
 		find_grid_minmax();
 
 		vec3 tmpVertex = maxVertex - minVertex;
-		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 40;
+		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 1.3;
 
 		axisX = (int(tmpVertex.x / gridSize) + 3);
 		axisY = (int(tmpVertex.y / gridSize) + 3);
@@ -883,6 +883,171 @@ namespace MarchingCube {
 
 		txt = "</Piece>\n</UnstructuredGrid>\n</VTKFile>";
 		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		fclose(file);
+	}
+	/*
+	void MarchingCube::print_vtk(std::string filepath)
+	{
+		FILE* file = NULL;
+
+		fopen_s(&file, filepath.c_str(), "wb");
+
+		std::string txt = "# vtk DataFile Version 3.0\n";
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+		txt = "POLYDATA poly\n";
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		txt = "ASCII\n";
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		txt = "DATASET POLYDATA\n";
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		txt = "POINTS " + std::to_string(h_data.triangles.size() * 3) + " float\n";
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		//txt = "";
+		txt = "";
+		for (int i = 0; i < h_data.triangles.size(); ++i) {
+			/*
+			fwrite(&h_data.triangles[i].t1.x, sizeof(float), 1, file);
+			fwrite(&h_data.triangles[i].t1.y, sizeof(float), 1, file);
+			fwrite(&h_data.triangles[i].t1.z, sizeof(float), 1, file);
+			fwrite(&h_data.triangles[i].t2.x, sizeof(float), 1, file);
+			fwrite(&h_data.triangles[i].t2.y, sizeof(float), 1, file);
+			fwrite(&h_data.triangles[i].t2.z, sizeof(float), 1, file);
+			fwrite(&h_data.triangles[i].t3.x, sizeof(float), 1, file);
+			fwrite(&h_data.triangles[i].t3.y, sizeof(float), 1, file);
+			fwrite(&h_data.triangles[i].t3.z, sizeof(float), 1, file);
+			txt += (std::to_string(h_data.triangles[i].t1.x) + " " + std::to_string(h_data.triangles[i].t1.y) + " " + std::to_string(h_data.triangles[i].t1.z) + "\n");
+			txt += (std::to_string(h_data.triangles[i].t2.x) + " " + std::to_string(h_data.triangles[i].t2.y) + " " + std::to_string(h_data.triangles[i].t2.z) + "\n");
+			txt += (std::to_string(h_data.triangles[i].t3.x) + " " + std::to_string(h_data.triangles[i].t3.y) + " " + std::to_string(h_data.triangles[i].t3.z) + "\n");
+		}
+
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+		txt = "\nPOLYGONS " + std::to_string(h_data.triangles.size()) + " " + std::to_string(h_data.triangles.size()*4) + "\n";
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+		int testNum = 3;
+
+		txt = "3 ";
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		//fwrite(&testNum, sizeof(testNum), 1, file);
+		txt = "";
+		for (int i = 0; i < h_data.triangles.size() * 3; ++i)
+		{
+			int tmpI = i;
+			if (i % 3 == 2) {
+				printf("%d\n", i);
+				txt += (std::to_string(i) + "\n");
+				//fwrite(&tmpI, sizeof(int), 1, file);
+				if (i == (h_data.triangles.size() * 3) - 1) break;
+				txt += ("3 ");
+				//fwrite(&testNum, sizeof(int), 1, file);
+				
+				//txt += (std::to_string(i) + "\n3 ");
+			}
+			else txt += (std::to_string(i) + " "); //fwrite(&tmpI, sizeof(int), 1, file);// ////
+		}
+		//fwrite(&txt, sizeof(txt), 1, file);
+		fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+		fclose(file);
+	}
+	*/
+	
+	void MarchingCube::print_vtk(std::string filepath)
+	{
+		FILE* file = NULL;
+
+		fopen_s(&file, filepath.c_str(), "wb");
+		std::stringstream txt;
+		std::stringstream txt2;
+		std::stringstream txt3;
+
+		txt << "# vtk DataFile Version 3.0\n";
+		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+		txt << "POLYDATA poly\n";
+		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		txt << "BINARY\n";
+		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		txt << "DATASET POLYDATA\n";
+		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		txt << "POINTS " + std::to_string(h_data.triangles.size() * 3) + " float\n";
+		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		//txt = "";
+		fwrite(txt.str().data(), txt.str().size(), 1, file);
+		unsigned char* bytes;
+		for (int i = 0; i < h_data.triangles.size(); ++i) {
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t1.x);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t1.x << " ";
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t1.y);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t1.y << " ";
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t1.z);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t1.z << "\n";
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t2.x);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t2.x << " ";
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t2.y);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t2.y << " ";
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t2.z);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t2.z << "\n";
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t3.x);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t3.x << " ";
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t3.y);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t3.y << " ";
+			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t3.z);
+			fwrite(bytes, sizeof(bytes), 1, file);
+			std::cout << h_data.triangles[i].t3.z << "\n";
+			//txt += (std::to_string(h_data.triangles[i].t1.x) + " " + std::to_string(h_data.triangles[i].t1.y) + " " + std::to_string(h_data.triangles[i].t1.z) + "\n");
+			//txt += (std::to_string(h_data.triangles[i].t2.x) + " " + std::to_string(h_data.triangles[i].t2.y) + " " + std::to_string(h_data.triangles[i].t2.z) + "\n");
+			//txt += (std::to_string(h_data.triangles[i].t3.x) + " " + std::to_string(h_data.triangles[i].t3.y) + " " + std::to_string(h_data.triangles[i].t3.z) + "\n");
+		}
+		//fwrite(&txt, sizeof(txt), 1, file);
+		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+
+		txt2 << "\nPOLYGONS " + std::to_string(h_data.triangles.size()) + " " + std::to_string(h_data.triangles.size() * 4) + "\n";
+		fwrite(txt2.str().data(), txt2.str().size(), 1, file);
+		
+		int testNum = 3;
+
+		//txt = "3 ";
+		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		fwrite(&testNum, sizeof(int), 1, file);
+		bytes = reinterpret_cast<unsigned char*>(&testNum);
+		fwrite(bytes, sizeof(bytes), 1, file);
+		std::cout << testNum << " ";
+		for (int i = 0; i < h_data.triangles.size() * 3; ++i)
+		{
+			int tmpI = i;
+			if (i % 3 == 2) {
+				bytes = reinterpret_cast<unsigned char*>(&tmpI);
+				fwrite(bytes, sizeof(bytes), 1, file);
+				std::cout << tmpI << "\n";
+				if (i == (h_data.triangles.size() * 3) - 1) break;
+				bytes = reinterpret_cast<unsigned char*>(&testNum);
+				fwrite(bytes, sizeof(bytes), 1, file);
+				std::cout << testNum << " ";
+
+				//txt += (std::to_string(i) + "\n3 ");
+			}
+			else
+			{
+				bytes = reinterpret_cast<unsigned char*>(&tmpI);
+				fwrite(bytes, sizeof(bytes), 1, file);
+				std::cout << tmpI << " ";
+			}
+		}
+		//fwrite(&txt, sizeof(txt), 1, file);
+		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		
+
 		fclose(file);
 	}
 
