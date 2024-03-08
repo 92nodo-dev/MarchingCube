@@ -596,7 +596,7 @@ namespace MarchingCube {
 		find_grid_minmax();
 
 		vec3 tmpVertex = maxVertex - minVertex;
-		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 1.3;
+		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 30;
 
 		axisX = (int(tmpVertex.x / gridSize) + 3);
 		axisY = (int(tmpVertex.y / gridSize) + 3);
@@ -975,9 +975,10 @@ namespace MarchingCube {
 		txt << "POINTS " + std::to_string(h_data.triangles.size() * 3) + " float\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 		//txt = "";
-		fwrite(txt.str().data(), txt.str().size(), 1, file);
+		//fwrite(txt.str().data(), txt.str().size(), 1, file);
 		unsigned char* bytes;
 		for (int i = 0; i < h_data.triangles.size(); ++i) {
+			/*
 			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t1.x);
 			fwrite(bytes, sizeof(bytes), 1, file);
 			std::cout << h_data.triangles[i].t1.x << " ";
@@ -1004,11 +1005,12 @@ namespace MarchingCube {
 			std::cout << h_data.triangles[i].t3.y << " ";
 			bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].t3.z);
 			fwrite(bytes, sizeof(bytes), 1, file);
-			std::cout << h_data.triangles[i].t3.z << "\n";
-			//txt += (std::to_string(h_data.triangles[i].t1.x) + " " + std::to_string(h_data.triangles[i].t1.y) + " " + std::to_string(h_data.triangles[i].t1.z) + "\n");
-			//txt += (std::to_string(h_data.triangles[i].t2.x) + " " + std::to_string(h_data.triangles[i].t2.y) + " " + std::to_string(h_data.triangles[i].t2.z) + "\n");
-			//txt += (std::to_string(h_data.triangles[i].t3.x) + " " + std::to_string(h_data.triangles[i].t3.y) + " " + std::to_string(h_data.triangles[i].t3.z) + "\n");
+			std::cout << h_data.triangles[i].t3.z << "\n";*/
+			txt << (std::to_string(h_data.triangles[i].t1.x) + " " + std::to_string(h_data.triangles[i].t1.y) + " " + std::to_string(h_data.triangles[i].t1.z) + "\n");
+			txt << (std::to_string(h_data.triangles[i].t2.x) + " " + std::to_string(h_data.triangles[i].t2.y) + " " + std::to_string(h_data.triangles[i].t2.z) + "\n");
+			txt << (std::to_string(h_data.triangles[i].t3.x) + " " + std::to_string(h_data.triangles[i].t3.y) + " " + std::to_string(h_data.triangles[i].t3.z) + "\n");
 		}
+		fwrite(txt.str().data(), txt.str().size(), 1, file);
 		//fwrite(&txt, sizeof(txt), 1, file);
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
@@ -1019,20 +1021,24 @@ namespace MarchingCube {
 
 		//txt = "3 ";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-		fwrite(&testNum, sizeof(int), 1, file);
+		txt3 << "3 ";
+		//fwrite(&testNum, sizeof(int), 1, file);
 		bytes = reinterpret_cast<unsigned char*>(&testNum);
-		fwrite(bytes, sizeof(bytes), 1, file);
+		//fwrite(bytes, sizeof(bytes), 1, file);
 		std::cout << testNum << " ";
 		for (int i = 0; i < h_data.triangles.size() * 3; ++i)
 		{
 			int tmpI = i;
 			if (i % 3 == 2) {
 				bytes = reinterpret_cast<unsigned char*>(&tmpI);
-				fwrite(bytes, sizeof(bytes), 1, file);
+				//fwrite(bytes, sizeof(bytes), 1, file);
+				txt3 << std::to_string(tmpI) << "\n";
 				std::cout << tmpI << "\n";
 				if (i == (h_data.triangles.size() * 3) - 1) break;
 				bytes = reinterpret_cast<unsigned char*>(&testNum);
-				fwrite(bytes, sizeof(bytes), 1, file);
+				txt3 << "3 ";
+				//fwrite(txt3.str().data(), txt3.str().size(), 1, file);
+				//fwrite(bytes, sizeof(bytes), 1, file);
 				std::cout << testNum << " ";
 
 				//txt += (std::to_string(i) + "\n3 ");
@@ -1040,12 +1046,15 @@ namespace MarchingCube {
 			else
 			{
 				bytes = reinterpret_cast<unsigned char*>(&tmpI);
-				fwrite(bytes, sizeof(bytes), 1, file);
+				//fwrite(bytes, sizeof(bytes), 1, file);
+				txt3 << std::to_string(tmpI) << " ";
+
 				std::cout << tmpI << " ";
 			}
 		}
 		//fwrite(&txt, sizeof(txt), 1, file);
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
+		fwrite(txt3.str().data(), txt3.str().size(), 1, file);
 		
 
 		fclose(file);
