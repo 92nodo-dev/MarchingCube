@@ -1015,10 +1015,6 @@ namespace MarchingCube {
 					pointIndex++;
 				}
 			}
-			for (int i = 0; i < h_data.triangles.size(); ++i)
-			{
-				if (h_data.triangles[i].a)
-			}
 		}
 		for (int i = 0; i < h_data.triangles.size(); ++i) {
 			/*
