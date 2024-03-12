@@ -996,30 +996,43 @@ namespace MarchingCube {
 		std::vector<vec3> writingPoint;
 		std::vector<int> connectivity;
 
+		bool isInsideWritingPoint_X = false;
+		bool isInsideWritingPoint_Y = false;
+		bool isInsideWritingPoint_Z = false;
+		/*
 		for (int i = 0; i < writingPoint.size(); ++i)
 		{
-			bool isInsideWritingPoint_X = false;
-			bool isInsideWritingPoint_Y = false;
-			bool isInsideWritingPoint_Z = false;
 			for (int j = 0; j < h_data.triangles.size(); ++j)
 			{
 				if ((h_data.triangles[j].t1.x == writingPoint[i].x) && (h_data.triangles[j].t1.y == writingPoint[i].y) && (h_data.triangles[j].t1.z == writingPoint[i].z)) {
 					h_data.triangles[j].connectivityIndex[0] = i;
+					isInsideWritingPoint_X = true;
+				}
+				else {
+
 				}
 				else if ((h_data.triangles[j].t2.x == writingPoint[i].x) && (h_data.triangles[j].t2.y == writingPoint[i].y) && (h_data.triangles[j].t2.z == writingPoint[i].z)) {
 					h_data.triangles[j].connectivityIndex[1] = i;
+					isInsideWritingPoint_Y = true;
 				}
 				else if ((h_data.triangles[j].t3.x == writingPoint[i].x) && (h_data.triangles[j].t3.y == writingPoint[i].y) && (h_data.triangles[j].t3.z == writingPoint[i].z)) {
 					h_data.triangles[j].connectivityIndex[2] = i;
-				}
-				else {
-					writingPoint.push_back(vec3{ h_data.triangles[j].t1.x,h_data.triangles[j].t1.y,h_data.triangles[j].t1.z });
+					isInsideWritingPoint_Z = true;
 				}
 			}
-		}
+		}*/
 
 		for (int i = 0; i < h_data.triangles.size(); ++i) {
 			for (int j = 0; j < writingPoint.size(); ++j) {
+				if ((h_data.triangles[i].t1.x == writingPoint[j].x) && (h_data.triangles[i].t1.y == writingPoint[j].y) && (h_data.triangles[i].t1.z == writingPoint[j].z)) {
+					h_data.triangles[i].connectivityIndex[0] = j;
+				}
+				else if ((h_data.triangles[i].t2.x == writingPoint[j].x) && (h_data.triangles[i].t2.y == writingPoint[j].y) && (h_data.triangles[i].t2.z == writingPoint[j].z)) {
+
+				}
+				else if ((h_data.triangles[i].t3.x == writingPoint[j].x) && (h_data.triangles[i].t3.y == writingPoint[j].y) && (h_data.triangles[i].t3.z == writingPoint[j].z)) {
+
+				}
 			}
 		}
 		/*
