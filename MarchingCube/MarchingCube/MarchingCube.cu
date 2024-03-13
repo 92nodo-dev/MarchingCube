@@ -978,6 +978,11 @@ namespace MarchingCube {
 		std::stringstream txt2;
 		std::stringstream txt3;
 
+		unsigned char* bytes;
+		int pointIndex = 0;
+		std::vector<vec3> writingPoint;
+		std::vector<int> connectivity;
+
 		txt << "# vtk DataFile Version 3.0\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
@@ -987,14 +992,9 @@ namespace MarchingCube {
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 		txt << "DATASET POLYDATA\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-		txt << "POINTS " + std::to_string(h_data.triangles.size() * 3) + " float\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 		//txt = "";
 		//fwrite(txt.str().data(), txt.str().size(), 1, file);
-		unsigned char* bytes;
-		int pointIndex = 0;
-		std::vector<vec3> writingPoint;
-		std::vector<int> connectivity;
 
 		/*
 		for (int i = 0; i < writingPoint.size(); ++i)
@@ -1095,6 +1095,8 @@ namespace MarchingCube {
 		//	txt << (std::to_string(h_data.triangles[i].t2.x) + " " + std::to_string(h_data.triangles[i].t2.y) + " " + std::to_string(h_data.triangles[i].t2.z) + "\n");
 		//	txt << (std::to_string(h_data.triangles[i].t3.x) + " " + std::to_string(h_data.triangles[i].t3.y) + " " + std::to_string(h_data.triangles[i].t3.z) + "\n");
 		//}
+
+		txt << "POINTS " + std::to_string(writingPoint.size()) + " float\n";
 		for (int i = 0; i < writingPoint.size(); ++i)
 		{
 			txt << (std::to_string(writingPoint[i].x) + " " + std::to_string(writingPoint[i].y) + " " + std::to_string(writingPoint[i].z) + "\n");
