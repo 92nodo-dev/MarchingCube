@@ -25,7 +25,7 @@ struct Triangle {
 	int a;
 	int b;
 	int c;
-	int connectivityIndex[3];
+	int connectivityIndex[3] = { 0, };
 	float density[3];
 	float pressure[3];
 };
