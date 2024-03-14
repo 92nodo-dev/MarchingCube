@@ -1019,6 +1019,7 @@ namespace MarchingCube {
 			}
 		}*/
 
+		// 여기서 찾는 방식을 수정해야함. 너무 오래걸림.
 		for (int i = 0; i < h_data.triangles.size(); ++i) {
 			bool isInsideWritingPoint_X = false;
 			bool isInsideWritingPoint_Y = false;
