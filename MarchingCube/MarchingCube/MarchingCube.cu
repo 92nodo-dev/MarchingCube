@@ -609,7 +609,7 @@ namespace MarchingCube {
 		find_grid_minmax();
 
 		vec3 tmpVertex = maxVertex - minVertex;
-		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 80;
+		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 10;
 
 		axisX = (int(tmpVertex.x / gridSize) + 3);
 		axisY = (int(tmpVertex.y / gridSize) + 3);
@@ -988,7 +988,7 @@ namespace MarchingCube {
 
 		txt << "POLYDATA poly\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-		txt << "ASCII\n";
+		txt << "BINARY\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 		txt << "DATASET POLYDATA\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
@@ -1098,11 +1098,17 @@ namespace MarchingCube {
 		//}
 
 		txt << "POINTS " + std::to_string(writingPoint.size()) + " float\n";
+		fwrite(txt.str().data(), txt.str().size(), 1, file);
+
+		bytes = reinterpret_cast<unsigned char*>(&writingPoint);
 		for (int i = 0; i < writingPoint.size(); ++i)
 		{
-			txt << (std::to_string(writingPoint[i].x) + " " + std::to_string(writingPoint[i].y) + " " + std::to_string(writingPoint[i].z) + "\n");
+			fwrite(&bytes[i], sizeof(bytes[i]), 1, file); //  txt.str().data(), txt.str().size(), 1, file);
+			//txt << (std::to_string(writingPoint[i].x) + " " + std::to_string(writingPoint[i].y) + " " + std::to_string(writingPoint[i].z) + "\n");
 		}
-		fwrite(txt.str().data(), txt.str().size(), 1, file);
+		//fwrite(txt.str().data(), txt.str().size(), 1, file);
+		// 
+		// 
 		//fwrite(&txt, sizeof(txt), 1, file);
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
@@ -1114,16 +1120,25 @@ namespace MarchingCube {
 		//txt = "3 ";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 		//fwrite(&testNum, sizeof(int), 1, file);
-		bytes = reinterpret_cast<unsigned char*>(&testNum);
+		//bytes = reinterpret_cast<unsigned char*>(&testNum);
 		//fwrite(bytes, sizeof(bytes), 1, file);
 		//std::cout << testNum << " ";
 		for (int i = 0; i < h_data.triangles.size(); ++i)
 		{
-			//bytes = reinterpret_cast<unsigned char*>(&h_data.triangles[i].connectivityIndex[0]);
+			bytes = reinterpret_cast<unsigned char*>(&testNum);
+			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);
+			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[0]));
+			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);
+			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[1]));
+			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);
+			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[2]));
+			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);
+			/*
 			txt3 << "3 ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[0]) << " ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[1]) << " ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[2]) << "\n";
+			*/
 		}
 		/*
 		for (int i = 0; i < h_data.triangles.size() * 3; ++i)
