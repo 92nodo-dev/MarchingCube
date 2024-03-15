@@ -609,7 +609,7 @@ namespace MarchingCube {
 		find_grid_minmax();
 
 		vec3 tmpVertex = maxVertex - minVertex;
-		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 10;
+		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 60;
 
 		axisX = (int(tmpVertex.x / gridSize) + 3);
 		axisY = (int(tmpVertex.y / gridSize) + 3);
