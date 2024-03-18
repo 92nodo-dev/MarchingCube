@@ -982,6 +982,8 @@ namespace MarchingCube {
 		int pointIndex = 0;
 		std::vector<vec3> writingPoint;
 		std::vector<int> connectivity;
+		int* pointArr = new int[h_data.triangles.size() * 3]{ -1, };
+		//pointArr = { -1, }
 
 		txt << "# vtk DataFile Version 3.0\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
@@ -1020,6 +1022,7 @@ namespace MarchingCube {
 		}*/
 
 		// 여기서 찾는 방식을 수정해야함. 너무 오래걸림.
+
 		for (int i = 0; i < h_data.triangles.size(); ++i) {
 			bool isInsideWritingPoint_X = false;
 			bool isInsideWritingPoint_Y = false;
@@ -1100,6 +1103,13 @@ namespace MarchingCube {
 		txt << "POINTS " + std::to_string(writingPoint.size()) + " float\n";
 		fwrite(txt.str().data(), txt.str().size(), 1, file);
 
+		std::vector<vec3> writingPoint;
+		
+		//for (int i = 0; i < testVec.size(); ++i)
+		//{
+		//	writingPoint.push_back(testVec[i]);
+		//}
+		
 		bytes = reinterpret_cast<unsigned char*>(&writingPoint);
 		for (int i = 0; i < writingPoint.size(); ++i)
 		{
