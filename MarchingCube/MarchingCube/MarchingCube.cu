@@ -1103,10 +1103,10 @@ namespace MarchingCube {
 		//	txt << (std::to_string(h_data.triangles[i].t3.x) + " " + std::to_string(h_data.triangles[i].t3.y) + " " + std::to_string(h_data.triangles[i].t3.z) + "\n");
 		//}
 
-		txt << "POINTS " + std::to_string(writingPoint.size()) + " float\n";
+		txt << "POINTS " << writingPoint.size() << " float\n"; // std::to_string(writingPoint.size()) + " float\n";
 		fwrite(txt.str().data(), txt.str().size(), 1, file);
 
-		std::vector<vec3> writingPoint;
+		//std::vector<vec3> writingPoint;
 		
 		//for (int i = 0; i < testVec.size(); ++i)
 		//{
