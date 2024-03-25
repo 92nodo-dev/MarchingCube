@@ -609,7 +609,7 @@ namespace MarchingCube {
 		find_grid_minmax();
 
 		vec3 tmpVertex = maxVertex - minVertex;
-		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 60;
+		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 70;
 
 		axisX = (int(tmpVertex.x / gridSize) + 3);
 		axisY = (int(tmpVertex.y / gridSize) + 3);
@@ -990,7 +990,7 @@ namespace MarchingCube {
 
 		txt << "POLYDATA poly\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-		txt << "BINARY\n";
+		txt << "ASCII\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 		txt << "DATASET POLYDATA\n";
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
@@ -1022,10 +1022,10 @@ namespace MarchingCube {
 		}*/
 
 		// 여기서 찾는 방식을 수정해야함. 너무 오래걸림.
-		for (int i = 0; i < h_data.triangles.size() * 3; ++i)
-		{
+		//for (int i = 0; i < h_data.triangles.size() * 3; ++i)
+		//{
 			
-		}
+		//}
 		for (int i = 0; i < h_data.triangles.size(); ++i) {
 			bool isInsideWritingPoint_X = false;
 			bool isInsideWritingPoint_Y = false;
@@ -1104,7 +1104,7 @@ namespace MarchingCube {
 		//}
 
 		txt << "POINTS " << writingPoint.size() << " float\n"; // std::to_string(writingPoint.size()) + " float\n";
-		fwrite(txt.str().data(), txt.str().size(), 1, file);
+		//fwrite(txt.str().data(), txt.str().size(), 1, file);
 
 		//std::vector<vec3> writingPoint;
 		
@@ -1116,10 +1116,10 @@ namespace MarchingCube {
 		bytes = reinterpret_cast<unsigned char*>(&writingPoint);
 		for (int i = 0; i < writingPoint.size(); ++i)
 		{
-			fwrite(&bytes[i], sizeof(bytes[i]), 1, file); //  txt.str().data(), txt.str().size(), 1, file);
-			//txt << (std::to_string(writingPoint[i].x) + " " + std::to_string(writingPoint[i].y) + " " + std::to_string(writingPoint[i].z) + "\n");
+			//fwrite(&bytes[i], sizeof(bytes[i]), 1, file); //  txt.str().data(), txt.str().size(), 1, file);
+			txt << (std::to_string(writingPoint[i].x) + " " + std::to_string(writingPoint[i].y) + " " + std::to_string(writingPoint[i].z) + "\n");
 		}
-		//fwrite(txt.str().data(), txt.str().size(), 1, file);
+		fwrite(txt.str().data(), txt.str().size(), 1, file);
 		// 
 		// 
 		//fwrite(&txt, sizeof(txt), 1, file);
@@ -1138,6 +1138,7 @@ namespace MarchingCube {
 		//std::cout << testNum << " ";
 		for (int i = 0; i < h_data.triangles.size(); ++i)
 		{
+			/*
 			bytes = reinterpret_cast<unsigned char*>(&testNum);
 			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);
 			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[0]));
@@ -1145,13 +1146,13 @@ namespace MarchingCube {
 			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[1]));
 			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);
 			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[2]));
-			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);
-			/*
+			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);*/
+			
 			txt3 << "3 ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[0]) << " ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[1]) << " ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[2]) << "\n";
-			*/
+			
 		}
 		/*
 		for (int i = 0; i < h_data.triangles.size() * 3; ++i)
