@@ -609,7 +609,7 @@ namespace MarchingCube {
 		find_grid_minmax();
 
 		vec3 tmpVertex = maxVertex - minVertex;
-		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 70;
+		gridSize = std::min(tmpVertex.x, std::min(tmpVertex.y, tmpVertex.z)) / 30;
 
 		axisX = (int(tmpVertex.x / gridSize) + 3);
 		axisY = (int(tmpVertex.y / gridSize) + 3);
@@ -972,13 +972,12 @@ namespace MarchingCube {
 	void MarchingCube::print_vtk(std::string filepath)
 	{
 		FILE* file = NULL;
-
+		char* startMemory = fileOutput;
 		fopen_s(&file, filepath.c_str(), "wb");
 		std::stringstream txt;
 		std::stringstream txt2;
 		std::stringstream txt3;
 
-		unsigned char* bytes;
 		int pointIndex = 0;
 		std::vector<vec3> writingPoint;
 		std::vector<int> connectivity;
@@ -1112,22 +1111,30 @@ namespace MarchingCube {
 		//{
 		//	writingPoint.push_back(testVec[i]);
 		//}
+		std::memcpy(fileOutput, txt.str().data(), txt.str().size());
+		fileOutput += txt.str().size();
 		
-		bytes = reinterpret_cast<unsigned char*>(&writingPoint);
+		
 		for (int i = 0; i < writingPoint.size(); ++i)
 		{
+			unsigned char* bytes = reinterpret_cast<unsigned char*>(&(writingPoint[i].x));
+			std::memcpy(fileOutput, &bytes, sizeof(bytes));
+			fileOutput += sizeof(bytes);
 			//fwrite(&bytes[i], sizeof(bytes[i]), 1, file); //  txt.str().data(), txt.str().size(), 1, file);
-			txt << (std::to_string(writingPoint[i].x) + " " + std::to_string(writingPoint[i].y) + " " + std::to_string(writingPoint[i].z) + "\n");
+			//txt << (std::to_string(writingPoint[i].x) + " " + std::to_string(writingPoint[i].y) + " " + std::to_string(writingPoint[i].z) + "\n");
 		}
-		fwrite(txt.str().data(), txt.str().size(), 1, file);
+		//fwrite(txt.str().data(), txt.str().size(), 1, file);
 		// 
 		// 
 		//fwrite(&txt, sizeof(txt), 1, file);
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 
 		txt2 << "\nPOLYGONS " + std::to_string(h_data.triangles.size()) + " " + std::to_string(h_data.triangles.size() * 4) + "\n";
-		fwrite(txt2.str().data(), txt2.str().size(), 1, file);
-		
+		//fwrite(txt2.str().data(), txt2.str().size(), 1, file);
+
+		std::memcpy(fileOutput, txt2.str().data(), txt2.str().size());
+		fileOutput += txt2.str().size();
+
 		int testNum = 3;
 
 		//txt = "3 ";
@@ -1138,6 +1145,18 @@ namespace MarchingCube {
 		//std::cout << testNum << " ";
 		for (int i = 0; i < h_data.triangles.size(); ++i)
 		{
+			unsigned char* bytes = reinterpret_cast<unsigned char*>(&testNum);
+			std::memcpy(fileOutput, &bytes, sizeof(bytes));
+			fileOutput += sizeof(bytes);
+			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[0]));
+			std::memcpy(fileOutput, &bytes, sizeof(bytes));
+			fileOutput += sizeof(bytes);
+			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[1]));
+			std::memcpy(fileOutput, &bytes, sizeof(bytes));
+			fileOutput += sizeof(bytes);
+			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[2]));
+			std::memcpy(fileOutput, &bytes, sizeof(bytes));
+			fileOutput += sizeof(bytes);
 			/*
 			bytes = reinterpret_cast<unsigned char*>(&testNum);
 			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);
@@ -1148,11 +1167,12 @@ namespace MarchingCube {
 			bytes = reinterpret_cast<unsigned char*>(&(h_data.triangles[i].connectivityIndex[2]));
 			fwrite(&bytes[0], sizeof(bytes[0]), 1, file);*/
 			
+			/*
 			txt3 << "3 ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[0]) << " ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[1]) << " ";
 			txt3 << std::to_string(h_data.triangles[i].connectivityIndex[2]) << "\n";
-			
+			*/
 		}
 		/*
 		for (int i = 0; i < h_data.triangles.size() * 3; ++i)
@@ -1183,8 +1203,10 @@ namespace MarchingCube {
 		}*/
 		//fwrite(&txt, sizeof(txt), 1, file);
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
-		fwrite(txt3.str().data(), txt3.str().size(), 1, file);
+		//fwrite(txt3.str().data(), txt3.str().size(), 1, file);
 		
+		fwrite(startMemory, (fileOutput - startMemory), 1, file);
+		//fwrite(fileOutput, fileOut)
 
 		fclose(file);
 	}
