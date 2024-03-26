@@ -12,6 +12,7 @@ namespace MarchingCube {
 class MarchingCube {
 
 private:
+	void* fileOutput = nullptr;
 	//std::vector<Particle> particles;
 	Particle* particles;
 
