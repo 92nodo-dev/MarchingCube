@@ -1111,7 +1111,9 @@ namespace MarchingCube {
 		//{
 		//	writingPoint.push_back(testVec[i]);
 		//}
-		std::memcpy(fileOutput, txt.str().data(), txt.str().size());
+		const void* address;
+		address = txt.str().data();
+		std::memcpy(fileOutput, address, txt.str().size());
 		fileOutput += txt.str().size();
 		
 		
@@ -1204,7 +1206,8 @@ namespace MarchingCube {
 		//fwrite(&txt, sizeof(txt), 1, file);
 		//fwrite(txt.c_str(), sizeof(char), txt.size(), file);
 		//fwrite(txt3.str().data(), txt3.str().size(), 1, file);
-		
+		std::cout << "start Memory : " << startMemory << "\n";
+		std::cout << "end Memory : " << fileOutput << "\n";
 		fwrite(startMemory, (fileOutput - startMemory), 1, file);
 		//fwrite(fileOutput, fileOut)
 
